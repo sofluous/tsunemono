@@ -7,7 +7,7 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap');
   :root {
-    --bg: #121829;
+    --bg: #080c16;
     --console-shell: #6f78be;
     --console-shell-hi: #8f96d6;
     --console-shell-lo: #4d568f;
@@ -28,10 +28,10 @@
     --console-b-hi: #f29aa4;
     --console-b-lo: #8e2c3a;
     --text: #eef7ff;
-    --sideW: 118px;
-    --sideGap: 16px;
-    --vSpace: 142px;
-    --playW: min(1380px, calc(100vw - (var(--sideW) * 2) - (var(--sideGap) * 2) - 24px), calc((100vh - var(--vSpace)) * 16 / 9));
+    --sideW: 146px;
+    --sideGap: 10px;
+    --vSpace: 126px;
+    --playW: min(1500px, calc(100vw - (var(--sideW) * 2) - (var(--sideGap) * 2) - 10px), calc((100vh - var(--vSpace)) * 16 / 9));
     --dmg0: #d8f3a3;
     --dmg1: #98b86e;
     --dmg2: #4f6f3d;
@@ -41,30 +41,54 @@
     height: 100%;
     margin: 0;
     overflow: hidden;
-    background:
-      radial-gradient(circle at 20% 10%, #2c5484 0%, #182a44 38%, #0c1321 100%);
+    background: #05070d;
     color: var(--text);
     font-family: Impact, Haettenschweiler, 'Arial Black', sans-serif;
     overscroll-behavior: none;
   }
   #wrap {
+    position: relative;
     height: 100dvh;
     display: grid;
     place-items: center;
-    padding: 2px;
+    padding: 4px;
     box-sizing: border-box;
+    overflow: hidden;
     background:
-      radial-gradient(circle at 50% 0%, #ffffff18, transparent 48%),
-      linear-gradient(180deg, transparent, #0000002f);
+      radial-gradient(circle at 50% -12%, #3b5f9f66 0%, #122038 34%, #060911 78%),
+      linear-gradient(180deg, #0f1730 0%, #05070d 68%);
+  }
+  #wrap::before {
+    content: '';
+    position: absolute;
+    left: -12%;
+    right: -12%;
+    top: 28%;
+    bottom: -30%;
+    background:
+      linear-gradient(180deg, #74b7ff20 0%, transparent 12%),
+      repeating-linear-gradient(90deg, #59a8ff33 0 2px, transparent 2px 52px),
+      repeating-linear-gradient(180deg, #59a8ff2a 0 2px, transparent 2px 52px);
+    transform: perspective(980px) rotateX(76deg);
+    transform-origin: center bottom;
+    opacity: 0.74;
+    pointer-events: none;
+  }
+  #wrap::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
   }
   #console {
     display: grid;
     grid-template-rows: auto auto;
-    gap: 6px;
+    gap: 4px;
     justify-items: stretch;
-    width: min(1720px, calc(100vw - 4px));
-    max-height: calc(100dvh - 20px);
-    padding: 6px;
+    width: min(1880px, calc(100vw - 2px));
+    max-height: calc(100dvh - 8px);
+    padding: 4px;
+    box-sizing: border-box;
     border-radius: 34px;
     border: 4px solid var(--console-border);
     background:
@@ -76,11 +100,12 @@
   }
   #midRow {
     display: grid;
-    grid-template-columns: minmax(96px, var(--sideW)) minmax(0, 1fr) minmax(96px, var(--sideW));
+    grid-template-columns: minmax(120px, var(--sideW)) minmax(0, 1fr) minmax(120px, var(--sideW));
     align-items: stretch;
-    gap: 8px;
+    gap: 6px;
     width: 100%;
-    justify-content: stretch;
+    justify-content: center;
+    min-width: 0;
     padding: 0;
     box-sizing: border-box;
     border-radius: 30px;
@@ -91,29 +116,44 @@
   }
   #stage {
     position: relative;
-    width: 100%;
-    max-width: var(--playW);
+    width: min(100%, var(--playW));
+    min-width: 0;
     aspect-ratio: 16 / 9;
+    justify-self: center;
+    align-self: center;
     background:
-      linear-gradient(180deg, #a5bf72, #7c9658);
-    border: 8px solid #465b37;
+      linear-gradient(180deg, #a3b3d94a 0%, #4b5f8d55 40%, #1d264066 100%);
+    border: 8px solid #6d7aa3;
     border-radius: 24px;
     overflow: hidden;
     box-shadow:
-      inset 0 0 0 4px #25331f,
-      inset 0 0 24px #d8f3a326,
+      inset 0 0 0 2px #d9ecff52,
+      inset 0 0 0 7px #2f3d6255,
+      inset 0 18px 26px #ffffff1b,
+      inset 0 -18px 24px #0b10211f,
       0 14px 28px #00000059;
     touch-action: none;
   }
+  #stage::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    pointer-events: none;
+    background:
+      linear-gradient(180deg, #ffffff22 0%, transparent 18%, transparent 74%, #09101f33 100%),
+      radial-gradient(circle at 18% 12%, #d7e6ff22 0%, transparent 28%);
+  }
   canvas { width: 100%; height: 100%; display: block; image-rendering: pixelated; }
   .sideCluster {
-    width: var(--sideW);
+    width: 100%;
+    min-width: 0;
     min-height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    padding: 6px;
+    padding: 8px;
     box-sizing: border-box;
     border-radius: 24px;
     border: 3px solid var(--console-border);
@@ -243,19 +283,24 @@
     display: none;
     place-items: center;
     pointer-events: auto;
+    padding: clamp(10px, 2.8vw, 24px);
+    box-sizing: border-box;
   }
   .card {
-    width: min(760px, 92vw);
+    width: min(78%, 58ch);
+    max-width: 100%;
+    max-height: 100%;
+    overflow: auto;
     border: 4px solid #31462b;
     border-radius: 0;
     background: linear-gradient(180deg, #c7df95, #8ba564);
-    padding: 16px;
+    padding: clamp(10px, 2vw, 16px);
     box-sizing: border-box;
     box-shadow: inset 0 2px 0 #eff8cf, inset 0 -2px 0 #4d653d;
     font-family: 'Silkscreen', 'Courier New', monospace;
   }
-  .title { margin: 0 0 6px; font-size: 18px; font-weight: 700; color: #1d2c1b; }
-  .sub { margin: 0 0 10px; color: #31462b; line-height: 1.5; font-size: 12px; }
+  .title { margin: 0 0 6px; font-size: clamp(14px, 1.7vw, 18px); font-weight: 700; color: #1d2c1b; }
+  .sub { margin: 0 0 10px; color: #31462b; line-height: 1.5; font-size: clamp(10px, 1.15vw, 12px); }
   .row { display: flex; flex-wrap: wrap; gap: 8px; }
   .cta {
     border: 3px solid #31462b;
@@ -267,7 +312,7 @@
     cursor: pointer;
     font-family: 'Silkscreen', 'Courier New', monospace;
   }
-  .hint { margin-top: 10px; color: #31462b; font-size: 11px; }
+  .hint { margin-top: 10px; color: #31462b; font-size: clamp(9px, 1vw, 11px); }
   .srOnly {
     position: absolute;
     width: 1px;
@@ -280,30 +325,33 @@
     border: 0;
   }
   @media (max-width: 920px) {
-    :root { --sideW: 104px; --sideGap: 10px; --vSpace: 150px; }
+    :root { --sideW: 122px; --sideGap: 8px; --vSpace: 140px; }
     #midRow { gap: 8px; padding: 0; }
+    .card { width: min(84%, 52ch); }
   }
   @media (max-width: 780px) {
-    :root { --sideW: 88px; --sideGap: 6px; --vSpace: 160px; }
-    #console { gap: 4px; padding: 6px; }
+    :root { --sideW: 98px; --sideGap: 6px; --vSpace: 152px; }
+    #console { gap: 4px; padding: 4px; }
     #midRow { gap: 4px; padding: 0; }
-    #stage { width: var(--playW); }
+    #stage { width: min(100%, var(--playW)); }
     .padWrap { width: min(100%, 98px); }
     .btn { font-size: 16px; }
     .aBtn, .bBtn { width: 50px; height: 50px; font-size: 16px; }
     .pill { min-width: 0; font-size: 9px; height: 30px; }
+    .card { width: min(88%, 48ch); }
   }
   @media (max-width: 900px) and (orientation: landscape) {
-    :root { --sideW: 86px; --sideGap: 6px; --vSpace: 140px; }
-    #wrap { padding: 6px; }
-    #console { gap: 4px; padding: 6px; }
+    :root { --sideW: 94px; --sideGap: 4px; --vSpace: 132px; }
+    #wrap { padding: 0; }
+    #console { gap: 4px; padding: 4px; }
     #midRow { padding: 0; gap: 4px; }
-    .sideCluster { padding: 4px 2px 2px; }
+    .sideCluster { padding: 4px; }
     .padWrap { width: min(100%, 76px); }
     .padCoreH, .padCoreV { border-width: 2px; }
     .btn { font-size: 14px; }
     .aBtn, .bBtn { width: 38px; height: 38px; font-size: 12px; border-width: 3px; }
     .pill { min-width: 0; height: 24px; font-size: 8px; border-width: 2px; }
+    .card { width: min(76%, 42ch); }
   }
 </style>
 </head>
@@ -333,7 +381,7 @@
           <div class='card'>
             <p class='title'>Sand Sandbox</p>
             <p class='sub'>
-              Move the cursor with the D-pad. Press <b>A</b> to interact with sand or select a rail item. Press <b>Select</b> to change rail sections and <b>B</b> to leave property editing.
+              Move the cursor with the D-pad. Press <b>A</b> to interact with sand, select a rail item, or focus the nozzle. While the nozzle is selected, left and right move it, up and down tilt it, <b>A</b> toggles spray, and <b>B</b> returns to the cursor.
               Mouse/touch can still drag directly in the sandbox.
             </p>
             <div class='row'><button class='cta' id='startBtn'>Start</button></div>
@@ -406,6 +454,7 @@
   const grid = new Uint32Array(GW * GH);
   const velX = new Float32Array(GW * GH);
   const velY = new Float32Array(GW * GH);
+  const simStamp = new Uint32Array(GW * GH);
 
   const bombs = [];
   const shoveCarry = [];
@@ -417,15 +466,15 @@
   let cy = (GH / 2) | 0;
   let moveCooldown = 0;
 
-  const nozzle = { x: (GW / 2) | 0, y: 7 };
+  const nozzle = { x: (GW / 2) | 0, y: 7, active: true, selected: false };
   const settings = {
     tool: 'grab',
     color: 1,
     weight: 7,
     dir: 0,
-    flow: 25,
+    flow: 12,
     spread: 1,
-    pressure: 4
+    pressure: 3
   };
   const HUD = {
     x: 0,
@@ -445,6 +494,7 @@
   let lastMouse = null;
 
   let seed = 0x137f4a6d;
+  let simTick = 0;
   function rnd() {
     seed ^= seed << 13; seed |= 0;
     seed ^= seed >>> 17;
@@ -466,7 +516,6 @@
   function controlLabel(id) {
     const labels = {
       color: 'COLOR',
-      dir: 'ANGLE',
       spread: 'SPREAD',
       flow: 'FLOW',
       pressure: 'POWER',
@@ -477,7 +526,6 @@
 
   function controlValue(id) {
     if (id === 'color') return PALETTE[settings.color].name.toUpperCase();
-    if (id === 'dir') return settings.dir > 0 ? 'R' + settings.dir : settings.dir < 0 ? 'L' + Math.abs(settings.dir) : 'C';
     if (id === 'spread') return settings.spread === 0 ? 'TIGHT' : String(settings.spread);
     if (id === 'flow') return settings.flow + '%';
     if (id === 'pressure') return String(settings.pressure);
@@ -514,15 +562,147 @@
     clearCell(from);
   }
 
+  function emitParticle(x, y, vx, vy, col) {
+    if (!inSandbox(x, y)) return false;
+    const i = idx(x, y);
+    if (grid[i] !== EMPTY) return false;
+    grid[i] = col;
+    velX[i] = clamp(vx, -26, 26);
+    velY[i] = clamp(vy, -26, 26);
+    return true;
+  }
+
+  function disturbImpact(x, y, vx, vy, energy) {
+    const splash = clamp(energy, 0, 0.75);
+    for (let yy = y - 1; yy <= y + 1; yy++) {
+      for (let xx = x - 1; xx <= x + 1; xx++) {
+        if (!inSandbox(xx, yy)) continue;
+        const i = idx(xx, yy);
+        if (grid[i] === EMPTY) continue;
+        const dx = xx - x;
+        velX[i] = clamp(velX[i] + (dx * 0.14) + (vx * 0.03), -8, 8);
+        velY[i] = clamp(velY[i] - (0.16 + splash * 0.48) + ((randf() - 0.5) * 0.12), -8, 8);
+      }
+    }
+  }
+
+  function trySettleFrom(i, x, y, vx, vy, slipChance) {
+    const belowY = y + 1;
+    if (belowY < SANDBOX_H && grid[idx(x, belowY)] === EMPTY) {
+      const to = idx(x, belowY);
+      moveCell(i, to);
+      velX[to] = vx * 0.92;
+      velY[to] = Math.max(0.3, vy * 0.75);
+      simStamp[to] = simTick;
+      return true;
+    }
+    if (randf() >= slipChance || belowY >= SANDBOX_H) return false;
+
+    const pref = sign(vx) || ((rnd() & 1) ? 1 : -1);
+    const choices = [pref, -pref];
+    for (let n = 0; n < choices.length; n++) {
+      const nx = x + choices[n];
+      if (!inSandbox(nx, belowY)) continue;
+      const to = idx(nx, belowY);
+      if (grid[to] !== EMPTY) continue;
+      moveCell(i, to);
+      velX[to] = clamp(vx + (choices[n] * 0.55), -12, 12);
+      velY[to] = Math.max(0.25, vy * 0.5);
+      simStamp[to] = simTick;
+      return true;
+    }
+    return false;
+  }
+
+  function simulateParticle(x, y, i, gravity, drag, slipChance, rebound) {
+    let vx = clamp(velX[i] * drag, -24, 24);
+    let vy = clamp(velY[i] + gravity, -24, 24);
+    let fx = x;
+    let fy = y;
+    let hitX = false;
+    let hitY = false;
+    const steps = Math.max(1, Math.ceil(Math.max(Math.abs(vx), Math.abs(vy))));
+
+    for (let s = 0; s < steps; s++) {
+      const nextFx = fx + (vx / steps);
+      const nextFy = fy + (vy / steps);
+      const curX = clamp(Math.round(fx), 0, GW - 1);
+      const curY = clamp(Math.round(fy), 0, SANDBOX_H - 1);
+
+      const targetX = clamp(Math.round(nextFx), 0, GW - 1);
+      if (targetX !== curX) {
+        const xi = idx(targetX, curY);
+        if (inSandbox(targetX, curY) && (grid[xi] === EMPTY || xi === i)) {
+          fx = nextFx;
+        } else {
+          vx = -vx * rebound;
+          hitX = true;
+        }
+      } else {
+        fx = nextFx;
+      }
+
+      const curX2 = clamp(Math.round(fx), 0, GW - 1);
+      const targetY = clamp(Math.round(nextFy), 0, SANDBOX_H - 1);
+      if (targetY !== curY) {
+        const yi = idx(curX2, targetY);
+        if (inSandbox(curX2, targetY) && (grid[yi] === EMPTY || yi === i)) {
+          fy = nextFy;
+        } else {
+          if (vy > 2.2) disturbImpact(curX2, curY, vx, vy, Math.abs(vy) / 12);
+          if (vy > 1.2 && randf() < 0.28) {
+            const splashDir = sign(vx) || ((rnd() & 1) ? 1 : -1);
+            vx += splashDir * 0.18;
+            vy = -Math.min(0.65, vy * 0.12);
+          } else {
+            vy = 0;
+            vx *= 0.42;
+          }
+          if (Math.abs(vx) < 0.18) vx = 0;
+          hitY = true;
+        }
+      } else {
+        fy = nextFy;
+      }
+
+      if ((hitX || hitY) && Math.abs(vx) < 0.18 && Math.abs(vy) < 0.18) break;
+    }
+
+    let tx = clamp(Math.round(fx), 1, sandboxXMax() - 1);
+    let ty = clamp(Math.round(fy), 0, SANDBOX_H - 1);
+    let dest = i;
+    if ((tx !== x || ty !== y) && grid[idx(tx, ty)] === EMPTY) {
+      dest = idx(tx, ty);
+      moveCell(i, dest);
+    } else {
+      tx = x;
+      ty = y;
+    }
+
+    if (dest === i && trySettleFrom(i, x, y, vx, vy, slipChance)) return;
+    if (hitY) {
+      vy = 0;
+      vx *= 0.68;
+    }
+    if (dest !== i && hitX && Math.abs(vx) < 0.22) vx = 0;
+
+    velX[dest] = Math.abs(vx) < 0.06 ? 0 : vx;
+    velY[dest] = Math.abs(vy) < 0.06 ? 0 : vy;
+    simStamp[dest] = simTick;
+  }
+
   function clearWorld() {
     grid.fill(EMPTY);
     velX.fill(0);
     velY.fill(0);
+    simStamp.fill(0);
     bombs.length = 0;
     shoveCarry.length = 0;
     holding = EMPTY;
     cx = (GW / 2) | 0;
     cy = (GH / 2) | 0;
+    nozzle.active = true;
+    nozzle.selected = false;
     HUD.editing = false;
   }
 
@@ -546,7 +726,6 @@
     if (HUD.mode === 'tools') return TOOLS.map((tool) => ({ kind: 'tool', id: tool.id, label: tool.label }));
     if (HUD.mode === 'nozzle') {
       return [
-        { kind: 'control', id: 'dir', label: 'Angle' },
         { kind: 'control', id: 'spread', label: 'Spread' },
         { kind: 'control', id: 'flow', label: 'Flow' },
         { kind: 'control', id: 'pressure', label: 'Power' },
@@ -593,6 +772,10 @@
   }
 
   function updateCanvasTooltip(x, y) {
+    if (cursorOnNozzleAt(x, y)) {
+      canvas.title = nozzle.selected ? (nozzle.active ? 'Nozzle active' : 'Nozzle paused') : 'Select nozzle';
+      return;
+    }
     const hit = hudHitAt(x, y);
     if (!hit) {
       canvas.title = '';
@@ -616,6 +799,7 @@
   }
 
   function cycleHudMode() {
+    if (nozzle.selected) return;
     const modes = hudModes();
     const i = (modes.findIndex((mode) => mode.id === HUD.mode) + 1) % modes.length;
     HUD.mode = modes[i].id;
@@ -625,6 +809,7 @@
 
   function applyHudHit(hit, activate) {
     if (!hit) return false;
+    nozzle.selected = false;
     if (hit.kind === 'mode') {
       HUD.mode = hit.id;
       HUD.index = 0;
@@ -649,7 +834,6 @@
 
   function adjustControl(name, delta) {
     if (name === 'color') settings.color = (settings.color + delta + PALETTE.length) % PALETTE.length;
-    if (name === 'dir') settings.dir = clamp(settings.dir + delta, -9, 9);
     if (name === 'weight') settings.weight = clamp(settings.weight + delta, 1, 12);
     if (name === 'flow') settings.flow = clamp(settings.flow + delta * 5, 0, 100);
     if (name === 'spread') settings.spread = clamp(settings.spread + delta, 0, 8);
@@ -660,6 +844,10 @@
   function currentHudEntry() {
     const entries = hudEntries();
     return entries[HUD.index] || null;
+  }
+
+  function cursorOnNozzleAt(x, y) {
+    return y < SANDBOX_H && Math.abs(x - nozzle.x) <= 8 && Math.abs(y - nozzle.y) <= 5;
   }
 
   function adjustHudEditing() {
@@ -676,98 +864,39 @@
   }
 
   function spawnFromNozzle() {
-    if (settings.flow <= 0) return;
+    if (!nozzle.active || settings.flow <= 0) return;
     const col = currentColor();
     const aim = getNozzleAim();
-    const spreadPx = 0.35 + settings.spread * 0.45;
-    const speedMag = 0.9 + settings.pressure * 0.33;
-    const emitCount = Math.max(1, ((settings.flow / 12) | 0) + ((settings.pressure / 4) | 0));
+    const spreadPx = 0.28 + settings.spread * 0.34;
+    const speedMag = 1 + settings.pressure * 0.4;
+    const emitCount = Math.max(1, ((settings.flow / 18) | 0) + ((settings.pressure / 7) | 0));
     for (let i = 0; i < emitCount; i++) {
       const lateral = (randf() - 0.5) * spreadPx;
       const sx = clamp((aim.emitX + aim.sideX * lateral) | 0, 1, sandboxXMax() - 1);
       const sy = clamp((aim.emitY + aim.sideY * lateral) | 0, 1, GH - 2);
-      const si = idx(sx, sy);
-      if (grid[si] === EMPTY && inSandbox(sx, sy)) {
-        const ang = aim.baseAng + ((randf() - 0.5) * (settings.spread * 0.028));
-        const speed = speedMag + (randf() * 0.2);
-        grid[si] = col;
-        velX[si] = clamp(Math.sin(ang) * speed, -24, 24);
-        velY[si] = clamp(Math.max(0.45, Math.cos(ang) * speed), -24, 24);
-      }
+      const ang = aim.baseAng + ((randf() - 0.5) * (settings.spread * 0.035));
+      const speed = speedMag + (randf() * 0.25);
+      emitParticle(sx, sy, Math.sin(ang) * speed, Math.cos(ang) * speed, col);
     }
   }
 
   function stepSand() {
+    simTick++;
     spawnFromNozzle();
 
     const dir = (rnd() & 1) ? 1 : -1;
     const xStart = dir === 1 ? 0 : GW - 1;
-    const slipChance = clamp((13 - settings.weight) / 13, 0.03, 0.95);
-    const settleChance = clamp(settings.weight / 16, 0.1, 0.9);
-    const grav = settings.weight >= 9 ? 2 : 1;
-    const drag = clamp(0.96 - settings.weight * 0.014, 0.72, 0.95);
+    const slipChance = clamp((13 - settings.weight) / 14, 0.06, 0.58);
+    const grav = 0.16 + (settings.weight * 0.038);
+    const drag = clamp(0.988 - (settings.weight * 0.009), 0.82, 0.976);
+    const rebound = clamp(0.2 - (settings.weight * 0.01), 0.04, 0.14);
 
     for (let y = GH - 2; y >= 0; y--) {
       for (let n = 0; n < GW; n++) {
         const x = xStart + dir * n;
         const i = idx(x, y);
-        if (grid[i] === EMPTY) continue;
-
-        let vx = velX[i];
-        let vy = velY[i];
-        vy = clamp(vy + grav, -28, 28);
-        vx = clamp(vx * drag, -28, 28);
-
-        let moved = false;
-        const tx = x + sign(vx);
-        const ty = y + sign(vy);
-
-        if (inSandbox(tx, ty) && grid[idx(tx, ty)] === EMPTY) {
-          const to = idx(tx, ty);
-          moveCell(i, to);
-          velX[to] = vx;
-          velY[to] = vy;
-          moved = true;
-        }
-
-        if (!moved) {
-          const by = y + 1;
-          if (by < GH && inSandbox(x, by) && grid[idx(x, by)] === EMPTY) {
-            const to = idx(x, by);
-            moveCell(i, to);
-            velX[to] = vx;
-            velY[to] = vy;
-            moved = true;
-          }
-        }
-
-        if (!moved && randf() < slipChance) {
-          const firstLeft = (rnd() & 1) === 0;
-          const x1 = x + (firstLeft ? -1 : 1);
-          const x2 = x + (firstLeft ? 1 : -1);
-          const yb = y + 1;
-
-          if (yb < GH && inSandbox(x1, yb) && grid[idx(x1, yb)] === EMPTY) {
-            const to = idx(x1, yb);
-            moveCell(i, to);
-            velX[to] = clamp(vx + (x1 - x), -6, 6);
-            velY[to] = vy;
-            moved = true;
-          } else if (yb < GH && inSandbox(x2, yb) && grid[idx(x2, yb)] === EMPTY) {
-            const to = idx(x2, yb);
-            moveCell(i, to);
-            velX[to] = clamp(vx + (x2 - x), -6, 6);
-            velY[to] = vy;
-            moved = true;
-          }
-        }
-
-        if (!moved) {
-          if (Math.abs(vy) > 1) vy = (-vy / 2) | 0;
-          if (randf() < settleChance) vx = (vx / 2) | 0;
-          velX[i] = vx;
-          velY[i] = vy;
-        }
+        if (grid[i] === EMPTY || simStamp[i] === simTick) continue;
+        simulateParticle(x, y, i, grav, drag, slipChance, rebound);
       }
     }
   }
@@ -831,21 +960,16 @@
   function sprayAt(x, y) {
     const col = currentColor();
     const aim = getNozzleAim();
-    const spreadPx = 0.25 + settings.spread * 0.4;
-    const speedBase = 0.8 + settings.pressure * 0.26;
+    const spreadPx = 0.25 + settings.spread * 0.38;
+    const speedBase = 1.2 + settings.pressure * 0.38;
     const emitCount = Math.max(2, 1 + ((settings.flow / 18) | 0));
     for (let i = 0; i < emitCount; i++) {
       const lateral = (randf() - 0.5) * spreadPx;
       const xx = clamp((x + aim.sideX * lateral) | 0, 1, sandboxXMax() - 1);
       const yy = clamp((y + aim.sideY * lateral) | 0, 1, GH - 2);
-      const p = idx(xx, yy);
-      if (grid[p] === EMPTY && inSandbox(xx, yy)) {
-        const ang = aim.baseAng + ((randf() - 0.5) * (settings.spread * 0.03));
-        const speed = speedBase + (randf() * 0.25);
-        grid[p] = col;
-        velX[p] = clamp(Math.sin(ang) * speed, -9, 9);
-        velY[p] = clamp(Math.max(0.45, Math.cos(ang) * speed), -9, 9);
-      }
+      const ang = aim.baseAng + ((randf() - 0.5) * (settings.spread * 0.05));
+      const speed = speedBase + (randf() * 0.35);
+      emitParticle(xx, yy, Math.sin(ang) * speed, Math.cos(ang) * speed, col);
     }
   }
 
@@ -1015,6 +1139,15 @@
     if (key.ArrowUp) dy--;
     if (key.ArrowDown) dy++;
     if (!dx && !dy) return;
+
+    if (nozzle.selected) {
+      nozzle.x = clamp(nozzle.x + dx, 8, sandboxXMax() - 8);
+      settings.dir = clamp(settings.dir - dy, -9, 9);
+      cx = nozzle.x;
+      cy = nozzle.y;
+      moveCooldown = 1;
+      return;
+    }
 
     cx = clamp(cx + dx, 0, GW - 1);
     cy = clamp(cy + dy, 0, GH - 1);
@@ -1205,6 +1338,7 @@
   }
 
   function drawCursor() {
+    if (nozzle.selected) return;
     const c1 = packRGB(130, 245, 185);
     const c2 = packRGB(8, 18, 14);
     const pts = [[0,0],[1,0],[-1,0],[0,1],[0,-1],[2,0],[-2,0],[0,2],[0,-2]];
@@ -1238,14 +1372,20 @@
 
     const nc = currentColor();
     const aim = getNozzleAim();
+    const nozzleHover = cursorOnNozzleAt(cx, cy);
+    if (nozzle.selected || nozzleHover) {
+      const ring = nozzle.selected ? packRGB(216, 243, 163) : packRGB(138, 212, 162);
+      drawDisk(aim.ballX, aim.ballY, 5, ring);
+      drawDisk(aim.ballX, aim.ballY, 4, packRGB(9, 15, 23));
+    }
     drawHLine(10, sandboxXMax() - 10, aim.ballY - 4, packRGB(56, 108, 160));
     drawHLine(10, sandboxXMax() - 10, aim.ballY - 3, packRGB(21, 55, 89));
-    drawDisk(aim.ballX, aim.ballY, 3, packRGB(255, 196, 79));
+    drawDisk(aim.ballX, aim.ballY, 3, nozzle.active ? packRGB(255, 196, 79) : packRGB(168, 146, 92));
     drawDisk(aim.ballX - 1, aim.ballY - 1, 1, packRGB(255, 239, 184));
     drawSegment(aim.ballX, aim.ballY, aim.tipX, aim.tipY, packRGB(123, 186, 255));
     drawSegment(aim.ballX, aim.ballY + 1, aim.tipX, aim.tipY + 1, packRGB(34, 79, 124));
     drawDisk(aim.tipX, aim.tipY, 1, packRGB(255, 248, 216));
-    if (inSandbox(aim.emitX, aim.emitY)) pix[idx(aim.emitX, aim.emitY)] = nc;
+    if (nozzle.active && inSandbox(aim.emitX, aim.emitY)) pix[idx(aim.emitX, aim.emitY)] = nc;
     drawHLine(0, GW - 1, SANDBOX_H, packRGB(56, 108, 160));
 
     for (let i = 0; i < bombs.length; i++) {
@@ -1273,7 +1413,7 @@
   }
 
   function syncPanels() {
-    canvas.dataset.mode = HUD.editing ? 'edit' : HUD.mode;
+    canvas.dataset.mode = nozzle.selected ? 'nozzle' : (HUD.editing ? 'edit' : HUD.mode);
   }
 
   function resize() {
@@ -1304,6 +1444,7 @@
       return true;
     }
     if (k === 'Back') {
+      nozzle.selected = false;
       HUD.editing = false;
       syncPanels();
       return true;
@@ -1320,9 +1461,18 @@
       if (!started) {
         doStart();
       } else if (!paused) {
-        const hit = hudHitAt(cx, cy);
-        if (hit) applyHudHit(hit, true);
-        else applyToolAt(cx, cy, lastMouse);
+        if (nozzle.selected) {
+          nozzle.active = !nozzle.active;
+        } else if (cursorOnNozzleAt(cx, cy)) {
+          nozzle.selected = true;
+          HUD.editing = false;
+          cx = nozzle.x;
+          cy = nozzle.y;
+        } else {
+          const hit = hudHitAt(cx, cy);
+          if (hit) applyHudHit(hit, true);
+          else applyToolAt(cx, cy, lastMouse);
+        }
         syncPanels();
       }
       return true;
@@ -1394,11 +1544,14 @@
     const p = worldFromClient(ev);
     cx = p.x;
     cy = p.y;
-    if (Math.abs(p.y - nozzle.y) <= 5 && Math.abs(p.x - nozzle.x) <= 8 && p.y < SANDBOX_H) {
+    if (cursorOnNozzleAt(p.x, p.y)) {
+      nozzle.selected = true;
+      HUD.editing = false;
       nozzleDrag = true;
       nozzle.x = clamp(p.x, 8, sandboxXMax() - 8);
       canvas.setPointerCapture(ev.pointerId);
       lastMouse = p;
+      syncPanels();
       return;
     }
     const hudHit = hudHitAt(p.x, p.y);
@@ -1408,9 +1561,11 @@
       syncPanels();
       return;
     }
+    nozzle.selected = false;
     applyToolAt(p.x, p.y, null);
     lastMouse = p;
     canvas.setPointerCapture(ev.pointerId);
+    syncPanels();
   }, { passive: false });
 
   canvas.addEventListener('pointermove', (ev) => {
@@ -1424,6 +1579,8 @@
     }
     if (nozzleDrag) {
       nozzle.x = clamp(p.x, 8, sandboxXMax() - 8);
+      cx = nozzle.x;
+      cy = nozzle.y;
       lastMouse = p;
       return;
     }
