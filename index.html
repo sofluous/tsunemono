@@ -1,0 +1,1479 @@
+<!doctype html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<meta name='viewport' content='width=device-width,initial-scale=1,maximum-scale=1' />
+<title>Sand Visualizer Toy</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap');
+  :root {
+    --bg: #121829;
+    --console-shell: #6f78be;
+    --console-shell-hi: #8f96d6;
+    --console-shell-lo: #4d568f;
+    --console-panel: #5f68aa;
+    --console-panel-hi: #7f88ca;
+    --console-panel-lo: #454f86;
+    --console-border: #39416f;
+    --console-text: #eef1ff;
+    --console-dpad: #b9bcc7;
+    --console-dpad-hi: #d5d8e0;
+    --console-dpad-lo: #787d8d;
+    --console-util: #171717;
+    --console-util-text: #c8ccd6;
+    --console-a: #54d6d0;
+    --console-a-hi: #92f0ec;
+    --console-a-lo: #24908c;
+    --console-b: #d95763;
+    --console-b-hi: #f29aa4;
+    --console-b-lo: #8e2c3a;
+    --text: #eef7ff;
+    --sideW: 118px;
+    --sideGap: 16px;
+    --vSpace: 142px;
+    --playW: min(1380px, calc(100vw - (var(--sideW) * 2) - (var(--sideGap) * 2) - 24px), calc((100vh - var(--vSpace)) * 16 / 9));
+    --dmg0: #d8f3a3;
+    --dmg1: #98b86e;
+    --dmg2: #4f6f3d;
+    --dmg3: #1d2c1b;
+  }
+  html, body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 20% 10%, #2c5484 0%, #182a44 38%, #0c1321 100%);
+    color: var(--text);
+    font-family: Impact, Haettenschweiler, 'Arial Black', sans-serif;
+    overscroll-behavior: none;
+  }
+  #wrap {
+    height: 100dvh;
+    display: grid;
+    place-items: center;
+    padding: 2px;
+    box-sizing: border-box;
+    background:
+      radial-gradient(circle at 50% 0%, #ffffff18, transparent 48%),
+      linear-gradient(180deg, transparent, #0000002f);
+  }
+  #console {
+    display: grid;
+    grid-template-rows: auto auto;
+    gap: 6px;
+    justify-items: stretch;
+    width: min(1720px, calc(100vw - 4px));
+    max-height: calc(100dvh - 20px);
+    padding: 6px;
+    border-radius: 34px;
+    border: 4px solid var(--console-border);
+    background:
+      linear-gradient(180deg, var(--console-shell-hi) 0 18%, var(--console-shell) 18% 68%, var(--console-shell-lo) 68% 100%);
+    box-shadow:
+      inset 0 4px 0 #b9c0f2,
+      inset 0 -5px 0 #363d69,
+      0 22px 56px #00000073;
+  }
+  #midRow {
+    display: grid;
+    grid-template-columns: minmax(96px, var(--sideW)) minmax(0, 1fr) minmax(96px, var(--sideW));
+    align-items: stretch;
+    gap: 8px;
+    width: 100%;
+    justify-content: stretch;
+    padding: 0;
+    box-sizing: border-box;
+    border-radius: 30px;
+    border: 3px solid var(--console-border);
+    background:
+      linear-gradient(180deg, var(--console-panel-hi) 0 24%, var(--console-panel) 24% 70%, var(--console-panel-lo) 70% 100%);
+    box-shadow: inset 0 2px 0 #adb5ea, inset 0 -2px 0 #353c67;
+  }
+  #stage {
+    position: relative;
+    width: 100%;
+    max-width: var(--playW);
+    aspect-ratio: 16 / 9;
+    background:
+      linear-gradient(180deg, #a5bf72, #7c9658);
+    border: 8px solid #465b37;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow:
+      inset 0 0 0 4px #25331f,
+      inset 0 0 24px #d8f3a326,
+      0 14px 28px #00000059;
+    touch-action: none;
+  }
+  canvas { width: 100%; height: 100%; display: block; image-rendering: pixelated; }
+  .sideCluster {
+    width: var(--sideW);
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px;
+    box-sizing: border-box;
+    border-radius: 24px;
+    border: 3px solid var(--console-border);
+    background:
+      linear-gradient(180deg, var(--console-panel-hi) 0 22%, var(--console-panel) 22% 72%, var(--console-panel-lo) 72% 100%);
+    box-shadow: inset 0 2px 0 #b9c0f2, inset 0 -2px 0 #353c67;
+    overflow: hidden;
+  }
+  .clusterBody {
+    width: 100%;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .glass {
+    border: 4px solid #8a430f;
+    background: linear-gradient(180deg, #ffe28e 0 22%, #eda934 22% 70%, #d8841e 70% 100%);
+    box-shadow: inset 0 3px 0 #fff2b7, inset 0 -3px 0 #844110, 0 6px 16px #00000047;
+    backdrop-filter: blur(3px);
+  }
+  .padWrap {
+    width: min(100%, 124px);
+    aspect-ratio: 1 / 1;
+    position: relative;
+    display: grid;
+    place-items: center;
+  }
+  .padCoreH, .padCoreV {
+    position: absolute;
+    border-radius: 22px;
+    border: 3px solid #6a6f7d;
+    background: linear-gradient(180deg, var(--console-dpad-hi) 0 18%, var(--console-dpad) 18% 66%, var(--console-dpad-lo) 66% 100%);
+    box-shadow: inset 0 2px 0 #f0f3f8, inset 0 -2px 0 #565b69, 0 3px 8px #00000038;
+  }
+  .padCoreH { width: 100%; height: 40%; }
+  .padCoreV { width: 40%; height: 100%; }
+  .pad {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1.2fr 1fr;
+    grid-template-rows: 1fr 1.2fr 1fr;
+    gap: 0;
+    pointer-events: auto;
+    user-select: none;
+    align-items: stretch;
+    justify-items: stretch;
+    position: relative;
+    z-index: 1;
+  }
+  .padSlot { width: 100%; height: 100%; display: grid; place-items: center; }
+  .btn {
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    color: #2f3440;
+    font-weight: 900;
+    display: grid;
+    place-items: center;
+    touch-action: none;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    font-size: 20px;
+  }
+  .action {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+    flex: 1;
+  }
+  .aBtn, .bBtn {
+    width: min(60px, 100%);
+    aspect-ratio: 1 / 1;
+    border-radius: 999px;
+    border: 4px solid #2d4f54;
+    background: radial-gradient(circle at 35% 30%, var(--console-a-hi) 0 10%, var(--console-a) 10% 30%, #2cb4ad 30% 50%, var(--console-a-lo) 50% 100%);
+    color: #113033;
+    box-shadow: inset 0 3px 0 #d3fffc, inset 0 -3px 0 #1d7070, 0 7px 12px #00000044;
+    font-size: 22px;
+    font-weight: 900;
+    display: grid;
+    place-items: center;
+    touch-action: none;
+  }
+  .bBtn {
+    border-color: #742c35;
+    background: radial-gradient(circle at 35% 30%, var(--console-b-hi) 0 10%, var(--console-b) 10% 30%, #bf4554 30% 50%, var(--console-b-lo) 50% 100%);
+    color: #fff1f2;
+  }
+  .pill {
+    width: min(100%, 88px);
+    height: 30px;
+    padding: 0 4px;
+    border-radius: 18px;
+    border: 3px solid #161616;
+    background: linear-gradient(180deg, #2a2a2a 0 24%, #111111 24% 100%);
+    color: var(--console-util-text);
+    font-size: 10px;
+    font-weight: 800;
+    display: grid;
+    place-items: center;
+    touch-action: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .clusterPill {
+    margin-top: 4px;
+    width: 100%;
+  }
+  .flowOn { color: #7cf2ff; }
+  .btn:hover, .pill:hover, .aBtn:hover, .bBtn:hover {
+    filter: brightness(1.08);
+  }
+  .btn:active, .pill:active, .aBtn:active, .bBtn:active {
+    transform: translateY(2px);
+    box-shadow: inset 0 1px 0 #6d7f91, inset 0 -1px 0 #0d161f;
+  }
+  .overlay {
+    position: absolute; inset: 0;
+    background: rgba(27, 40, 24, 0.78);
+    display: none;
+    place-items: center;
+    pointer-events: auto;
+  }
+  .card {
+    width: min(760px, 92vw);
+    border: 4px solid #31462b;
+    border-radius: 0;
+    background: linear-gradient(180deg, #c7df95, #8ba564);
+    padding: 16px;
+    box-sizing: border-box;
+    box-shadow: inset 0 2px 0 #eff8cf, inset 0 -2px 0 #4d653d;
+    font-family: 'Silkscreen', 'Courier New', monospace;
+  }
+  .title { margin: 0 0 6px; font-size: 18px; font-weight: 700; color: #1d2c1b; }
+  .sub { margin: 0 0 10px; color: #31462b; line-height: 1.5; font-size: 12px; }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .cta {
+    border: 3px solid #31462b;
+    border-radius: 0;
+    background: linear-gradient(180deg, #d8f3a3, #8ba564);
+    color: #1d2c1b;
+    font-weight: 800;
+    padding: 10px 12px;
+    cursor: pointer;
+    font-family: 'Silkscreen', 'Courier New', monospace;
+  }
+  .hint { margin-top: 10px; color: #31462b; font-size: 11px; }
+  .srOnly {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  @media (max-width: 920px) {
+    :root { --sideW: 104px; --sideGap: 10px; --vSpace: 150px; }
+    #midRow { gap: 8px; padding: 0; }
+  }
+  @media (max-width: 780px) {
+    :root { --sideW: 88px; --sideGap: 6px; --vSpace: 160px; }
+    #console { gap: 4px; padding: 6px; }
+    #midRow { gap: 4px; padding: 0; }
+    #stage { width: var(--playW); }
+    .padWrap { width: min(100%, 98px); }
+    .btn { font-size: 16px; }
+    .aBtn, .bBtn { width: 50px; height: 50px; font-size: 16px; }
+    .pill { min-width: 0; font-size: 9px; height: 30px; }
+  }
+  @media (max-width: 900px) and (orientation: landscape) {
+    :root { --sideW: 86px; --sideGap: 6px; --vSpace: 140px; }
+    #wrap { padding: 6px; }
+    #console { gap: 4px; padding: 6px; }
+    #midRow { padding: 0; gap: 4px; }
+    .sideCluster { padding: 4px 2px 2px; }
+    .padWrap { width: min(100%, 76px); }
+    .padCoreH, .padCoreV { border-width: 2px; }
+    .btn { font-size: 14px; }
+    .aBtn, .bBtn { width: 38px; height: 38px; font-size: 12px; border-width: 3px; }
+    .pill { min-width: 0; height: 24px; font-size: 8px; border-width: 2px; }
+  }
+</style>
+</head>
+<body>
+<div id='wrap'>
+  <div id='console'>
+    <div id='midRow'>
+      <div class='sideCluster'>
+        <div class='clusterBody'>
+          <div class='padWrap' aria-label='dpad'>
+            <div class='padCoreH'></div>
+            <div class='padCoreV'></div>
+            <div class='pad'>
+              <div class='padSlot'></div><div class='padSlot'><div class='btn upBtn' data-k='ArrowUp' aria-label='Up'>&#9650;</div></div><div class='padSlot'></div>
+              <div class='padSlot'><div class='btn leftBtn' data-k='ArrowLeft' aria-label='Left'>&#9664;</div></div><div class='padSlot'></div><div class='padSlot'><div class='btn rightBtn' data-k='ArrowRight' aria-label='Right'>&#9654;</div></div>
+              <div class='padSlot'></div><div class='padSlot'><div class='btn downBtn' data-k='ArrowDown' aria-label='Down'>&#9660;</div></div><div class='padSlot'></div>
+            </div>
+          </div>
+        </div>
+        <div class='pill clusterPill' data-k='Select'>Select</div>
+      </div>
+
+      <div id='stage'>
+        <canvas id='c'></canvas>
+
+        <div class='overlay' id='startOverlay' style='display:grid;'>
+          <div class='card'>
+            <p class='title'>Sand Sandbox</p>
+            <p class='sub'>
+              Move the cursor with the D-pad. Press <b>A</b> to interact with sand or select a rail item. Press <b>Select</b> to change rail sections and <b>B</b> to leave property editing.
+              Mouse/touch can still drag directly in the sandbox.
+            </p>
+            <div class='row'><button class='cta' id='startBtn'>Start</button></div>
+            <div class='hint'>Tools: Grab, Poke, Fling, Spray, Bomb (3s fuse), and Shove (scoop/drop).</div>
+          </div>
+        </div>
+
+        <div class='overlay' id='pauseOverlay'>
+          <div class='card'>
+            <p class='title'>Paused</p>
+            <p class='sub'>Continue or restart the sandbox.</p>
+            <div class='row'>
+              <button class='cta' id='continueBtn'>Continue</button>
+              <button class='cta' id='restartBtn'>Restart</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class='sideCluster'>
+        <div class='clusterBody'>
+          <div class='action'>
+            <div class='bBtn' data-k='Back'>B</div>
+            <div class='aBtn' data-k='Action'>A</div>
+          </div>
+        </div>
+        <div class='pill clusterPill' id='pauseBtn' data-k='Pause'>Start</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const GW = 240;
+  const GH = 135;
+  const EMPTY = 0;
+  const MAX_STEPS = 2;
+  const SANDBOX_H = 121;
+
+  const TOOLS = [
+    { id: 'grab', label: 'Grab' },
+    { id: 'poke', label: 'Hit' },
+    { id: 'fling', label: 'Fling' },
+    { id: 'spray', label: 'Spray' },
+    { id: 'pull', label: 'Pull' },
+    { id: 'burst', label: 'Burst' },
+    { id: 'bomb', label: 'Bomb' },
+    { id: 'shove', label: 'Shove' }
+  ];
+
+  const PALETTE = [
+    { name: 'Ivory', rgb: [238, 232, 210] },
+    { name: 'Amber', rgb: [246, 186, 90] },
+    { name: 'Coral', rgb: [247, 120, 120] },
+    { name: 'Mint', rgb: [120, 236, 180] },
+    { name: 'Sky', rgb: [125, 190, 246] },
+    { name: 'Slate', rgb: [180, 182, 196] }
+  ];
+
+  const canvas = document.getElementById('c');
+  const ctx = canvas.getContext('2d', { alpha: false, desynchronized: true });
+  const rcan = document.createElement('canvas');
+  rcan.width = GW;
+  rcan.height = GH;
+  const rctx = rcan.getContext('2d', { alpha: false });
+  const img = rctx.createImageData(GW, GH);
+  const pix = new Uint32Array(img.data.buffer);
+
+  const grid = new Uint32Array(GW * GH);
+  const velX = new Float32Array(GW * GH);
+  const velY = new Float32Array(GW * GH);
+
+  const bombs = [];
+  const shoveCarry = [];
+
+  let started = false;
+  let paused = false;
+  let holding = EMPTY;
+  let cx = (GW / 2) | 0;
+  let cy = (GH / 2) | 0;
+  let moveCooldown = 0;
+
+  const nozzle = { x: (GW / 2) | 0, y: 7 };
+  const settings = {
+    tool: 'grab',
+    color: 1,
+    weight: 7,
+    dir: 0,
+    flow: 25,
+    spread: 1,
+    pressure: 4
+  };
+  const HUD = {
+    x: 0,
+    y: SANDBOX_H + 1,
+    w: GW,
+    h: GH - SANDBOX_H - 1,
+    modeW: 22,
+    mode: 'tools',
+    index: 0,
+    editing: false
+  };
+
+  const key = Object.create(null);
+  const pressed = Object.create(null);
+  let mouseDown = false;
+  let nozzleDrag = false;
+  let lastMouse = null;
+
+  let seed = 0x137f4a6d;
+  function rnd() {
+    seed ^= seed << 13; seed |= 0;
+    seed ^= seed >>> 17;
+    seed ^= seed << 5; seed |= 0;
+    return seed >>> 0;
+  }
+  function randf() { return rnd() / 4294967296; }
+  function clamp(v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); }
+  function idx(x, y) { return x + y * GW; }
+  function inb(x, y) { return x >= 0 && x < GW && y >= 0 && y < GH; }
+  function sign(v) { return v < 0 ? -1 : v > 0 ? 1 : 0; }
+  function packRGB(r, g, b) { return (0xff << 24) | (b << 16) | (g << 8) | r; }
+
+  function currentColor() {
+    const p = PALETTE[settings.color] || PALETTE[0];
+    return packRGB(p.rgb[0], p.rgb[1], p.rgb[2]);
+  }
+
+  function controlLabel(id) {
+    const labels = {
+      color: 'COLOR',
+      dir: 'ANGLE',
+      spread: 'SPREAD',
+      flow: 'FLOW',
+      pressure: 'POWER',
+      weight: 'WEIGHT'
+    };
+    return labels[id] || id.toUpperCase();
+  }
+
+  function controlValue(id) {
+    if (id === 'color') return PALETTE[settings.color].name.toUpperCase();
+    if (id === 'dir') return settings.dir > 0 ? 'R' + settings.dir : settings.dir < 0 ? 'L' + Math.abs(settings.dir) : 'C';
+    if (id === 'spread') return settings.spread === 0 ? 'TIGHT' : String(settings.spread);
+    if (id === 'flow') return settings.flow + '%';
+    if (id === 'pressure') return String(settings.pressure);
+    if (id === 'weight') return String(settings.weight);
+    return '';
+  }
+
+  function getNozzleAim() {
+    const baseAng = (settings.dir * 7) * Math.PI / 180;
+    const dirX = Math.sin(baseAng);
+    const dirY = Math.cos(baseAng);
+    const sideX = dirY;
+    const sideY = -dirX;
+    const ballX = clamp(nozzle.x, 8, sandboxXMax() - 8);
+    const ballY = nozzle.y;
+    const armLen = 5;
+    const tipX = clamp((ballX + dirX * armLen) | 0, 2, sandboxXMax() - 2);
+    const tipY = clamp((ballY + dirY * armLen) | 0, 2, GH - 3);
+    const emitX = clamp((ballX + dirX * (armLen + 1.2)) | 0, 2, sandboxXMax() - 2);
+    const emitY = clamp((ballY + dirY * (armLen + 1.2)) | 0, 2, GH - 3);
+    return { baseAng, dirX, dirY, sideX, sideY, ballX, ballY, tipX, tipY, emitX, emitY };
+  }
+
+  function clearCell(i) {
+    grid[i] = EMPTY;
+    velX[i] = 0;
+    velY[i] = 0;
+  }
+
+  function moveCell(from, to) {
+    grid[to] = grid[from];
+    velX[to] = velX[from];
+    velY[to] = velY[from];
+    clearCell(from);
+  }
+
+  function clearWorld() {
+    grid.fill(EMPTY);
+    velX.fill(0);
+    velY.fill(0);
+    bombs.length = 0;
+    shoveCarry.length = 0;
+    holding = EMPTY;
+    cx = (GW / 2) | 0;
+    cy = (GH / 2) | 0;
+    HUD.editing = false;
+  }
+
+  function sandboxXMax() {
+    return GW - 1;
+  }
+
+  function inSandbox(x, y) {
+    return x >= 0 && x < GW && y >= 0 && y < SANDBOX_H;
+  }
+
+  function hudModes() {
+    return [
+      { id: 'tools', label: 'TOOLS' },
+      { id: 'nozzle', label: 'NOZZLE' },
+      { id: 'sand', label: 'SAND' }
+    ];
+  }
+
+  function hudEntries() {
+    if (HUD.mode === 'tools') return TOOLS.map((tool) => ({ kind: 'tool', id: tool.id, label: tool.label }));
+    if (HUD.mode === 'nozzle') {
+      return [
+        { kind: 'control', id: 'dir', label: 'Angle' },
+        { kind: 'control', id: 'spread', label: 'Spread' },
+        { kind: 'control', id: 'flow', label: 'Flow' },
+        { kind: 'control', id: 'pressure', label: 'Power' },
+        { kind: 'control', id: 'weight', label: 'Weight' }
+      ];
+    }
+    return PALETTE.map((swatch, index) => ({ kind: 'color', id: 'color', value: index, label: swatch.name }));
+  }
+
+  function hudModeRect(index) {
+    const x = HUD.x + index * HUD.modeW;
+    return {
+      x,
+      y: HUD.y,
+      w: HUD.modeW,
+      h: HUD.h
+    };
+  }
+
+  function hudEntryRect(index) {
+    const entries = hudEntries();
+    const entryX = HUD.x + (hudModes().length * HUD.modeW);
+    const entryW = ((HUD.w - (entryX - HUD.x)) / Math.max(entries.length, 1)) | 0;
+    return {
+      x: entryX + (index * entryW),
+      y: HUD.y,
+      w: index === entries.length - 1 ? HUD.w - (entryX - HUD.x) - (index * entryW) : entryW,
+      h: HUD.h
+    };
+  }
+
+  function hudHitAt(x, y) {
+    const modes = hudModes();
+    for (let i = 0; i < modes.length; i++) {
+      const r = hudModeRect(i);
+      if (x >= r.x && x < r.x + r.w && y >= r.y && y < r.y + r.h) return { kind: 'mode', id: modes[i].id, index: i };
+    }
+    const entries = hudEntries();
+    for (let i = 0; i < entries.length; i++) {
+      const r = hudEntryRect(i);
+      if (x >= r.x && x < r.x + r.w && y >= r.y && y < r.y + r.h) return { kind: entries[i].kind, id: entries[i].id, index: i, value: entries[i].value };
+    }
+    return null;
+  }
+
+  function updateCanvasTooltip(x, y) {
+    const hit = hudHitAt(x, y);
+    if (!hit) {
+      canvas.title = '';
+      return;
+    }
+    if (hit.kind === 'tool') {
+      const tool = TOOLS.find((item) => item.id === hit.id);
+      canvas.title = tool ? tool.label : '';
+      return;
+    }
+    if (hit.kind === 'mode') {
+      const mode = hudModes()[hit.index];
+      canvas.title = mode ? mode.label : '';
+      return;
+    }
+    if (hit.kind === 'color') {
+      canvas.title = PALETTE[hit.value] ? PALETTE[hit.value].name : '';
+      return;
+    }
+    canvas.title = controlLabel(hit.id);
+  }
+
+  function cycleHudMode() {
+    const modes = hudModes();
+    const i = (modes.findIndex((mode) => mode.id === HUD.mode) + 1) % modes.length;
+    HUD.mode = modes[i].id;
+    HUD.index = 0;
+    HUD.editing = false;
+  }
+
+  function applyHudHit(hit, activate) {
+    if (!hit) return false;
+    if (hit.kind === 'mode') {
+      HUD.mode = hit.id;
+      HUD.index = 0;
+      HUD.editing = false;
+      return true;
+    }
+    HUD.index = hit.index;
+    if (hit.kind === 'tool') {
+      settings.tool = hit.id;
+      HUD.editing = false;
+      return true;
+    }
+    if (hit.kind === 'color') {
+      settings.color = hit.value;
+      HUD.editing = false;
+      syncPanels();
+      return true;
+    }
+    HUD.editing = !!activate;
+    return true;
+  }
+
+  function adjustControl(name, delta) {
+    if (name === 'color') settings.color = (settings.color + delta + PALETTE.length) % PALETTE.length;
+    if (name === 'dir') settings.dir = clamp(settings.dir + delta, -9, 9);
+    if (name === 'weight') settings.weight = clamp(settings.weight + delta, 1, 12);
+    if (name === 'flow') settings.flow = clamp(settings.flow + delta * 5, 0, 100);
+    if (name === 'spread') settings.spread = clamp(settings.spread + delta, 0, 8);
+    if (name === 'pressure') settings.pressure = clamp(settings.pressure + delta, 1, 12);
+    syncPanels();
+  }
+
+  function currentHudEntry() {
+    const entries = hudEntries();
+    return entries[HUD.index] || null;
+  }
+
+  function adjustHudEditing() {
+    if (!HUD.editing) return;
+    const entries = hudEntries();
+    if (!entries.length) return;
+    if (pressed.ArrowLeft) HUD.index = (HUD.index + entries.length - 1) % entries.length;
+    if (pressed.ArrowRight) HUD.index = (HUD.index + 1) % entries.length;
+    const entry = currentHudEntry();
+    if (entry && entry.kind === 'control') {
+      if (pressed.ArrowUp) adjustControl(entry.id, 1);
+      if (pressed.ArrowDown) adjustControl(entry.id, -1);
+    }
+  }
+
+  function spawnFromNozzle() {
+    if (settings.flow <= 0) return;
+    const col = currentColor();
+    const aim = getNozzleAim();
+    const spreadPx = 0.35 + settings.spread * 0.45;
+    const speedMag = 0.9 + settings.pressure * 0.33;
+    const emitCount = Math.max(1, ((settings.flow / 12) | 0) + ((settings.pressure / 4) | 0));
+    for (let i = 0; i < emitCount; i++) {
+      const lateral = (randf() - 0.5) * spreadPx;
+      const sx = clamp((aim.emitX + aim.sideX * lateral) | 0, 1, sandboxXMax() - 1);
+      const sy = clamp((aim.emitY + aim.sideY * lateral) | 0, 1, GH - 2);
+      const si = idx(sx, sy);
+      if (grid[si] === EMPTY && inSandbox(sx, sy)) {
+        const ang = aim.baseAng + ((randf() - 0.5) * (settings.spread * 0.028));
+        const speed = speedMag + (randf() * 0.2);
+        grid[si] = col;
+        velX[si] = clamp(Math.sin(ang) * speed, -24, 24);
+        velY[si] = clamp(Math.max(0.45, Math.cos(ang) * speed), -24, 24);
+      }
+    }
+  }
+
+  function stepSand() {
+    spawnFromNozzle();
+
+    const dir = (rnd() & 1) ? 1 : -1;
+    const xStart = dir === 1 ? 0 : GW - 1;
+    const slipChance = clamp((13 - settings.weight) / 13, 0.03, 0.95);
+    const settleChance = clamp(settings.weight / 16, 0.1, 0.9);
+    const grav = settings.weight >= 9 ? 2 : 1;
+    const drag = clamp(0.96 - settings.weight * 0.014, 0.72, 0.95);
+
+    for (let y = GH - 2; y >= 0; y--) {
+      for (let n = 0; n < GW; n++) {
+        const x = xStart + dir * n;
+        const i = idx(x, y);
+        if (grid[i] === EMPTY) continue;
+
+        let vx = velX[i];
+        let vy = velY[i];
+        vy = clamp(vy + grav, -28, 28);
+        vx = clamp(vx * drag, -28, 28);
+
+        let moved = false;
+        const tx = x + sign(vx);
+        const ty = y + sign(vy);
+
+        if (inSandbox(tx, ty) && grid[idx(tx, ty)] === EMPTY) {
+          const to = idx(tx, ty);
+          moveCell(i, to);
+          velX[to] = vx;
+          velY[to] = vy;
+          moved = true;
+        }
+
+        if (!moved) {
+          const by = y + 1;
+          if (by < GH && inSandbox(x, by) && grid[idx(x, by)] === EMPTY) {
+            const to = idx(x, by);
+            moveCell(i, to);
+            velX[to] = vx;
+            velY[to] = vy;
+            moved = true;
+          }
+        }
+
+        if (!moved && randf() < slipChance) {
+          const firstLeft = (rnd() & 1) === 0;
+          const x1 = x + (firstLeft ? -1 : 1);
+          const x2 = x + (firstLeft ? 1 : -1);
+          const yb = y + 1;
+
+          if (yb < GH && inSandbox(x1, yb) && grid[idx(x1, yb)] === EMPTY) {
+            const to = idx(x1, yb);
+            moveCell(i, to);
+            velX[to] = clamp(vx + (x1 - x), -6, 6);
+            velY[to] = vy;
+            moved = true;
+          } else if (yb < GH && inSandbox(x2, yb) && grid[idx(x2, yb)] === EMPTY) {
+            const to = idx(x2, yb);
+            moveCell(i, to);
+            velX[to] = clamp(vx + (x2 - x), -6, 6);
+            velY[to] = vy;
+            moved = true;
+          }
+        }
+
+        if (!moved) {
+          if (Math.abs(vy) > 1) vy = (-vy / 2) | 0;
+          if (randf() < settleChance) vx = (vx / 2) | 0;
+          velX[i] = vx;
+          velY[i] = vy;
+        }
+      }
+    }
+  }
+
+  function tryGrabOrDropAt(x, y) {
+    if (!inb(x, y)) return;
+    const i = idx(x, y);
+    if (holding === EMPTY) {
+      if (grid[i] !== EMPTY) {
+        holding = grid[i];
+        clearCell(i);
+      }
+    } else if (grid[i] === EMPTY) {
+      grid[i] = holding;
+      velX[i] = 0;
+      velY[i] = 0;
+      holding = EMPTY;
+    }
+  }
+
+  function pokeAt(x, y, force) {
+    const r = 8;
+    for (let yy = y - r; yy <= y + r; yy++) {
+      if (yy < 1 || yy >= GH - 1) continue;
+      for (let xx = x - r; xx <= x + r; xx++) {
+        if (xx < 1 || xx >= GW - 1) continue;
+        const dx = xx - x;
+        const dy = yy - y;
+        const d2 = dx * dx + dy * dy;
+        if (d2 > r * r) continue;
+        const i = idx(xx, yy);
+        if (grid[i] === EMPTY) continue;
+        const power = force * (1 - d2 / (r * r));
+        velX[i] = clamp(velX[i] + (dx * power * 1.4) | 0, -14, 14);
+        velY[i] = clamp(velY[i] - ((5 + power * 5) | 0), -14, 14);
+      }
+    }
+  }
+
+  function flingBetween(x0, y0, x1, y1) {
+    const dx = x1 - x0;
+    const dy = y1 - y0;
+    const steps = Math.max(1, Math.max(Math.abs(dx), Math.abs(dy)));
+    const ix = clamp((dx / steps) * 10, -16, 16);
+    const iy = clamp((dy / steps) * 10, -16, 16);
+    for (let s = 0; s <= steps; s++) {
+      const x = (x0 + dx * (s / steps)) | 0;
+      const y = (y0 + dy * (s / steps)) | 0;
+      for (let yy = y - 3; yy <= y + 3; yy++) {
+        for (let xx = x - 3; xx <= x + 3; xx++) {
+          if (!inb(xx, yy)) continue;
+          const i = idx(xx, yy);
+          if (grid[i] === EMPTY) continue;
+          velX[i] = clamp(velX[i] + ix, -18, 18);
+          velY[i] = clamp(velY[i] + iy - 5, -18, 18);
+        }
+      }
+    }
+  }
+
+  function sprayAt(x, y) {
+    const col = currentColor();
+    const aim = getNozzleAim();
+    const spreadPx = 0.25 + settings.spread * 0.4;
+    const speedBase = 0.8 + settings.pressure * 0.26;
+    const emitCount = Math.max(2, 1 + ((settings.flow / 18) | 0));
+    for (let i = 0; i < emitCount; i++) {
+      const lateral = (randf() - 0.5) * spreadPx;
+      const xx = clamp((x + aim.sideX * lateral) | 0, 1, sandboxXMax() - 1);
+      const yy = clamp((y + aim.sideY * lateral) | 0, 1, GH - 2);
+      const p = idx(xx, yy);
+      if (grid[p] === EMPTY && inSandbox(xx, yy)) {
+        const ang = aim.baseAng + ((randf() - 0.5) * (settings.spread * 0.03));
+        const speed = speedBase + (randf() * 0.25);
+        grid[p] = col;
+        velX[p] = clamp(Math.sin(ang) * speed, -9, 9);
+        velY[p] = clamp(Math.max(0.45, Math.cos(ang) * speed), -9, 9);
+      }
+    }
+  }
+
+  function pullAt(x, y, force) {
+    const r = 10;
+    for (let yy = y - r; yy <= y + r; yy++) {
+      if (yy < 1 || yy >= GH - 1) continue;
+      for (let xx = x - r; xx <= x + r; xx++) {
+        if (xx < 1 || xx >= GW - 1) continue;
+        const dx = x - xx;
+        const dy = y - yy;
+        const d2 = dx * dx + dy * dy;
+        if (d2 > r * r) continue;
+        const i = idx(xx, yy);
+        if (grid[i] === EMPTY) continue;
+        const pull = force * (1 - d2 / (r * r));
+        velX[i] = clamp(velX[i] + (dx * pull * 0.7) | 0, -20, 20);
+        velY[i] = clamp(velY[i] + (dy * pull * 0.7) | 0, -20, 20);
+      }
+    }
+  }
+
+  function burstAt(x, y) {
+    pokeAt(x, y, 4.8);
+    const r = 12;
+    for (let yy = y - r; yy <= y + r; yy++) {
+      if (yy < 1 || yy >= GH - 1) continue;
+      for (let xx = x - r; xx <= x + r; xx++) {
+        if (xx < 1 || xx >= GW - 1) continue;
+        const dx = xx - x;
+        const dy = yy - y;
+        const d2 = dx * dx + dy * dy;
+        if (d2 > r * r) continue;
+        const i = idx(xx, yy);
+        if (grid[i] === EMPTY) continue;
+        const d = Math.sqrt(d2) || 1;
+        const impulse = 8 + (1 - d / r) * 10;
+        velX[i] = clamp((velX[i] + (dx / d) * impulse) | 0, -26, 26);
+        velY[i] = clamp((velY[i] + (dy / d) * impulse - 4) | 0, -26, 26);
+      }
+    }
+  }
+
+  function placeBomb(x, y) {
+    if (bombs.length >= 3) return;
+    bombs.push({ x, y, timer: 3, acc: 0 });
+  }
+
+  function explodeBomb(b) {
+    const r = 30;
+    const r2 = r * r;
+    for (let yy = b.y - r; yy <= b.y + r; yy++) {
+      if (yy < 1 || yy >= GH - 1) continue;
+      for (let xx = b.x - r; xx <= b.x + r; xx++) {
+        if (xx < 1 || xx >= GW - 1) continue;
+        const dx = xx - b.x;
+        const dy = yy - b.y;
+        const d2 = dx * dx + dy * dy;
+        if (d2 > r2) continue;
+        const i = idx(xx, yy);
+        if (grid[i] === EMPTY) continue;
+
+        const d = Math.sqrt(d2) || 1;
+        const power = 1 - d / r;
+        const push = 6 + (power * 24);
+        velX[i] = clamp((velX[i] + (dx / d) * push) | 0, -26, 26);
+        velY[i] = clamp((velY[i] + (dy / d) * push - 9) | 0, -26, 26);
+
+        if (d < 5 && randf() < 0.5) clearCell(i);
+      }
+    }
+  }
+
+  function updateBombs(dt) {
+    for (let i = bombs.length - 1; i >= 0; i--) {
+      const b = bombs[i];
+      b.acc += dt;
+      while (b.acc >= 1000) {
+        b.acc -= 1000;
+        b.timer -= 1;
+      }
+      if (b.timer <= 0) {
+        explodeBomb(b);
+        bombs.splice(i, 1);
+      }
+    }
+  }
+
+  function shoveAt(x, y) {
+    const r = 5;
+    if (shoveCarry.length === 0) {
+      for (let yy = y - r; yy <= y + r; yy++) {
+        for (let xx = x - r; xx <= x + r; xx++) {
+          if (!inb(xx, yy)) continue;
+          const i = idx(xx, yy);
+          if (grid[i] === EMPTY) continue;
+          shoveCarry.push(grid[i]);
+          clearCell(i);
+          if (shoveCarry.length >= 220) return;
+        }
+      }
+    } else {
+      for (let yy = y - r; yy <= y + r; yy++) {
+        for (let xx = x - r; xx <= x + r; xx++) {
+          if (!inb(xx, yy)) continue;
+          if (shoveCarry.length === 0) return;
+          const i = idx(xx, yy);
+          if (grid[i] !== EMPTY) continue;
+          grid[i] = shoveCarry.pop();
+          velX[i] = 0;
+          velY[i] = 0;
+        }
+      }
+    }
+  }
+
+  function applyToolAt(x, y, prev) {
+    const hudHit = hudHitAt(x, y);
+    if (applyHudHit(hudHit, 1)) {
+      return;
+    }
+    if (!inSandbox(x, y)) return;
+    if (settings.tool === 'grab') {
+      tryGrabOrDropAt(x, y);
+      return;
+    }
+    if (settings.tool === 'poke') {
+      pokeAt(x, y, 2.4);
+      return;
+    }
+    if (settings.tool === 'fling') {
+      if (prev) flingBetween(prev.x, prev.y, x, y);
+      else pokeAt(x, y, 1.3);
+      return;
+    }
+    if (settings.tool === 'spray') {
+      sprayAt(x, y);
+      return;
+    }
+    if (settings.tool === 'pull') {
+      pullAt(x, y, 2.8);
+      return;
+    }
+    if (settings.tool === 'burst') {
+      burstAt(x, y);
+      return;
+    }
+    if (settings.tool === 'bomb') {
+      placeBomb(x, y);
+      return;
+    }
+    if (settings.tool === 'shove') {
+      shoveAt(x, y);
+    }
+  }
+
+  function moveCursor() {
+    if (moveCooldown > 0) {
+      moveCooldown--;
+      return;
+    }
+
+    let dx = 0;
+    let dy = 0;
+    if (key.ArrowLeft) dx--;
+    if (key.ArrowRight) dx++;
+    if (key.ArrowUp) dy--;
+    if (key.ArrowDown) dy++;
+    if (!dx && !dy) return;
+
+    cx = clamp(cx + dx, 0, GW - 1);
+    cy = clamp(cy + dy, 0, GH - 1);
+    moveCooldown = 1;
+  }
+
+  function drawBox(x, y, w, h, b, f) {
+    for (let yy = y; yy < y + h; yy++) {
+      if (yy < 0 || yy >= GH) continue;
+      const row = yy * GW;
+      for (let xx = x; xx < x + w; xx++) {
+        if (xx < 0 || xx >= GW) continue;
+        pix[row + xx] = f;
+      }
+    }
+    for (let xx = x; xx < x + w; xx++) {
+      if (xx < 0 || xx >= GW) continue;
+      if (y >= 0 && y < GH) pix[idx(xx, y)] = b;
+      if (y + h - 1 >= 0 && y + h - 1 < GH) pix[idx(xx, y + h - 1)] = b;
+    }
+    for (let yy = y; yy < y + h; yy++) {
+      if (yy < 0 || yy >= GH) continue;
+      if (x >= 0 && x < GW) pix[idx(x, yy)] = b;
+      if (x + w - 1 >= 0 && x + w - 1 < GW) pix[idx(x + w - 1, yy)] = b;
+    }
+  }
+
+  function drawHLine(x0, x1, y, c) {
+    if (y < 0 || y >= GH) return;
+    const left = clamp(Math.min(x0, x1), 0, GW - 1);
+    const right = clamp(Math.max(x0, x1), 0, GW - 1);
+    for (let x = left; x <= right; x++) pix[idx(x, y)] = c;
+  }
+
+  function drawVLine(x, y0, y1, c) {
+    if (x < 0 || x >= GW) return;
+    const top = clamp(Math.min(y0, y1), 0, GH - 1);
+    const bottom = clamp(Math.max(y0, y1), 0, GH - 1);
+    for (let y = top; y <= bottom; y++) pix[idx(x, y)] = c;
+  }
+
+  function drawSegment(x0, y0, x1, y1, c) {
+    const steps = Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0), 1);
+    for (let s = 0; s <= steps; s++) {
+      const x = (x0 + ((x1 - x0) * s) / steps) | 0;
+      const y = (y0 + ((y1 - y0) * s) / steps) | 0;
+      if (inb(x, y)) pix[idx(x, y)] = c;
+    }
+  }
+
+  function drawDisk(cx0, cy0, r, c) {
+    for (let y = cy0 - r; y <= cy0 + r; y++) {
+      for (let x = cx0 - r; x <= cx0 + r; x++) {
+        const dx = x - cx0;
+        const dy = y - cy0;
+        if ((dx * dx) + (dy * dy) <= (r * r) && inb(x, y)) pix[idx(x, y)] = c;
+      }
+    }
+  }
+
+  function drawToolGlyphMini(id, x, y, c) {
+    if (id === 'grab') {
+      drawVLine(x + 2, y + 2, y + 7, c);
+      drawVLine(x + 8, y + 2, y + 7, c);
+      drawHLine(x + 3, x + 7, y + 4, c);
+      return;
+    }
+    if (id === 'poke') {
+      drawHLine(x + 2, x + 8, y + 5, c);
+      drawVLine(x + 8, y + 4, y + 6, c);
+      return;
+    }
+    if (id === 'fling') {
+      drawHLine(x + 2, x + 8, y + 6, c);
+      drawVLine(x + 7, y + 4, y + 6, c);
+      pix[idx(x + 8, y + 3)] = c;
+      return;
+    }
+    if (id === 'spray') {
+      pix[idx(x + 3, y + 6)] = c;
+      pix[idx(x + 5, y + 5)] = c;
+      pix[idx(x + 7, y + 4)] = c;
+      pix[idx(x + 8, y + 2)] = c;
+      pix[idx(x + 8, y + 6)] = c;
+      return;
+    }
+    if (id === 'pull') {
+      drawHLine(x + 2, x + 8, y + 5, c);
+      drawVLine(x + 2, y + 4, y + 6, c);
+      return;
+    }
+    if (id === 'burst') {
+      drawHLine(x + 3, x + 7, y + 5, c);
+      drawVLine(x + 5, y + 3, y + 7, c);
+      pix[idx(x + 3, y + 3)] = c;
+      pix[idx(x + 7, y + 3)] = c;
+      pix[idx(x + 3, y + 7)] = c;
+      pix[idx(x + 7, y + 7)] = c;
+      return;
+    }
+    if (id === 'bomb') {
+      drawBox(x + 2, y + 2, 6, 6, c, c);
+      pix[idx(x + 7, y + 2)] = bgColorDark();
+      pix[idx(x + 8, y + 1)] = c;
+      return;
+    }
+    if (id === 'shove') {
+      drawHLine(x + 2, x + 8, y + 7, c);
+      drawVLine(x + 6, y + 3, y + 7, c);
+    }
+  }
+
+  function bgColorDark() {
+    return packRGB(8, 12, 18);
+  }
+
+  function drawHudPanel() {
+    const border = packRGB(41, 62, 34);
+    const fill = packRGB(79, 111, 61);
+    const screenBay = packRGB(57, 80, 45);
+    const activeFill = packRGB(29, 44, 27);
+    const activeBorder = packRGB(216, 243, 163);
+    const icon = packRGB(216, 243, 163);
+    const muted = packRGB(157, 184, 116);
+    drawBox(HUD.x, HUD.y, HUD.w, HUD.h, border, screenBay);
+
+    const modes = hudModes();
+    for (let i = 0; i < modes.length; i++) {
+      const r = hudModeRect(i);
+      const active = HUD.mode === modes[i].id;
+      drawBox(r.x, r.y, r.w, r.h, active ? activeBorder : border, active ? activeFill : fill);
+      drawHLine(r.x + 2, r.x + r.w - 3, r.y + r.h - 2, active ? icon : muted);
+    }
+
+    const entries = hudEntries();
+    for (let i = 0; i < entries.length; i++) {
+      const entry = entries[i];
+      const r = hudEntryRect(i);
+      const active = entry.kind === 'tool' ? settings.tool === entry.id : entry.kind === 'color' ? settings.color === entry.value : HUD.index === i;
+      if (entry.kind === 'tool') {
+        const size = Math.max(6, Math.min(r.w - 2, r.h - 2));
+        const ox = r.x + (((r.w - size) / 2) | 0);
+        const oy = r.y + (((r.h - size) / 2) | 0);
+        drawBox(ox, oy, size, size, active ? activeBorder : border, active ? activeFill : fill);
+        drawToolGlyphMini(entry.id, ox + (((size - 10) / 2) | 0), oy + (((size - 10) / 2) | 0), active ? icon : muted);
+      } else if (entry.kind === 'color') {
+        const rgb = PALETTE[entry.value].rgb;
+        drawBox(r.x, r.y, r.w, r.h, active ? activeBorder : border, screenBay);
+        drawBox(r.x + 1, r.y + 1, Math.max(1, r.w - 2), Math.max(1, r.h - 2), packRGB(rgb[0], rgb[1], rgb[2]), packRGB(rgb[0], rgb[1], rgb[2]));
+      } else {
+        if (active) drawHLine(r.x + 1, r.x + r.w - 2, r.y + 1, activeBorder);
+      }
+    }
+  }
+
+  function drawHudTextOverlay() {
+    const sx = canvas.width / GW;
+    const sy = canvas.height / GH;
+    ctx.save();
+    ctx.textBaseline = 'middle';
+    ctx.font = "700 " + Math.max(6, Math.round(Math.min(sx, sy) * 2.2)) + "px 'Silkscreen', 'Courier New', monospace";
+
+    const modes = hudModes();
+    for (let i = 0; i < modes.length; i++) {
+      const r = hudModeRect(i);
+      ctx.fillStyle = HUD.mode === modes[i].id ? '#d8f3a3' : '#c4d78e';
+      ctx.textAlign = 'center';
+      ctx.fillText(modes[i].label, (r.x + (r.w / 2)) * sx, (r.y + (r.h / 2)) * sy);
+    }
+
+    const entries = hudEntries();
+    for (let i = 0; i < entries.length; i++) {
+      const entry = entries[i];
+      const r = hudEntryRect(i);
+      const active = entry.kind === 'tool' ? settings.tool === entry.id : entry.kind === 'color' ? settings.color === entry.value : HUD.index === i;
+      if (entry.kind === 'control') {
+        const label = controlLabel(entry.id);
+        const value = controlValue(entry.id);
+        ctx.fillStyle = active ? '#d8f3a3' : '#e9f5c6';
+        ctx.textAlign = 'center';
+        ctx.fillText(label, (r.x + (r.w / 2)) * sx, (r.y + (r.h * 0.34)) * sy);
+        if (value) {
+          ctx.fillText(value, (r.x + (r.w / 2)) * sx, (r.y + (r.h * 0.7)) * sy);
+        }
+      }
+    }
+    ctx.restore();
+  }
+
+  function drawCursor() {
+    const c1 = packRGB(130, 245, 185);
+    const c2 = packRGB(8, 18, 14);
+    const pts = [[0,0],[1,0],[-1,0],[0,1],[0,-1],[2,0],[-2,0],[0,2],[0,-2]];
+    for (let i = 0; i < pts.length; i++) {
+      const x = cx + pts[i][0];
+      const y = cy + pts[i][1];
+      if (inb(x, y)) pix[idx(x, y)] = c1;
+    }
+    if (inb(cx, cy)) {
+      const p = idx(cx, cy);
+      const base = pix[p];
+      const br = base & 255;
+      const bg = (base >>> 8) & 255;
+      const bb = (base >>> 16) & 255;
+      const sr = c2 & 255;
+      const sg = (c2 >>> 8) & 255;
+      const sb = (c2 >>> 16) & 255;
+      pix[p] = packRGB((br + sr) >> 1, (bg + sg) >> 1, (bb + sb) >> 1);
+    }
+  }
+
+  function draw() {
+    const bg = bgColorDark();
+    pix.fill(bg);
+
+    drawBox(0, 0, GW, SANDBOX_H, packRGB(18, 42, 68), packRGB(9, 15, 23));
+
+    for (let i = 0; i < grid.length; i++) {
+      if (grid[i] !== EMPTY) pix[i] = grid[i];
+    }
+
+    const nc = currentColor();
+    const aim = getNozzleAim();
+    drawHLine(10, sandboxXMax() - 10, aim.ballY - 4, packRGB(56, 108, 160));
+    drawHLine(10, sandboxXMax() - 10, aim.ballY - 3, packRGB(21, 55, 89));
+    drawDisk(aim.ballX, aim.ballY, 3, packRGB(255, 196, 79));
+    drawDisk(aim.ballX - 1, aim.ballY - 1, 1, packRGB(255, 239, 184));
+    drawSegment(aim.ballX, aim.ballY, aim.tipX, aim.tipY, packRGB(123, 186, 255));
+    drawSegment(aim.ballX, aim.ballY + 1, aim.tipX, aim.tipY + 1, packRGB(34, 79, 124));
+    drawDisk(aim.tipX, aim.tipY, 1, packRGB(255, 248, 216));
+    if (inSandbox(aim.emitX, aim.emitY)) pix[idx(aim.emitX, aim.emitY)] = nc;
+    drawHLine(0, GW - 1, SANDBOX_H, packRGB(56, 108, 160));
+
+    for (let i = 0; i < bombs.length; i++) {
+      const b = bombs[i];
+      if (inb(b.x, b.y)) pix[idx(b.x, b.y)] = packRGB(255, 120, 120);
+      if (inb(b.x, b.y - 1)) pix[idx(b.x, b.y - 1)] = packRGB(245, 220, 140);
+    }
+
+    drawHudPanel();
+    drawCursor();
+
+    if (holding !== EMPTY && inb(cx, cy)) pix[idx(cx, cy)] = holding;
+
+    rctx.putImageData(img, 0, 0);
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(rcan, 0, 0, canvas.width, canvas.height);
+    drawHudTextOverlay();
+  }
+
+  function worldFromClient(ev) {
+    const rect = canvas.getBoundingClientRect();
+    const x = clamp((((ev.clientX - rect.left) / rect.width) * GW) | 0, 0, GW - 1);
+    const y = clamp((((ev.clientY - rect.top) / rect.height) * GH) | 0, 0, GH - 1);
+    return { x, y };
+  }
+
+  function syncPanels() {
+    canvas.dataset.mode = HUD.editing ? 'edit' : HUD.mode;
+  }
+
+  function resize() {
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = Math.max(1, rect.width | 0);
+    canvas.height = Math.max(1, rect.height | 0);
+    ctx.imageSmoothingEnabled = false;
+  }
+
+  const ro = new ResizeObserver(resize);
+  ro.observe(canvas);
+  resize();
+
+  function mapKey(e) {
+    const k = e.key;
+    if (k === ' ' || k === 'Enter') return 'Action';
+    if (k === 'Escape' || k === 'p' || k === 'P') return 'Pause';
+    if (k === 'Backspace' || k === 'x' || k === 'X') return 'Back';
+    if (k === 'Tab' || k === 'z' || k === 'Z' || k === 'Shift') return 'Select';
+    if (k === 'ArrowUp' || k === 'ArrowDown' || k === 'ArrowLeft' || k === 'ArrowRight') return k;
+    return null;
+  }
+
+  function triggerVirtualButton(k) {
+    if (k === 'Select') {
+      cycleHudMode();
+      syncPanels();
+      return true;
+    }
+    if (k === 'Back') {
+      HUD.editing = false;
+      syncPanels();
+      return true;
+    }
+    if (k === 'Pause') {
+      if (!started) {
+        doStart();
+      } else {
+        togglePause();
+      }
+      return true;
+    }
+    if (k === 'Action') {
+      if (!started) {
+        doStart();
+      } else if (!paused) {
+        const hit = hudHitAt(cx, cy);
+        if (hit) applyHudHit(hit, true);
+        else applyToolAt(cx, cy, lastMouse);
+        syncPanels();
+      }
+      return true;
+    }
+    return false;
+  }
+
+  function doStart() {
+    if (started) return;
+    started = true;
+    document.getElementById('startOverlay').style.display = 'none';
+  }
+
+  function setPaused(v) {
+    paused = v;
+    document.getElementById('pauseOverlay').style.display = paused ? 'grid' : 'none';
+    document.getElementById('pauseBtn').textContent = paused ? 'Resume' : 'Start';
+  }
+
+  function togglePause() {
+    if (!started) return;
+    setPaused(!paused);
+  }
+
+  window.addEventListener('keydown', (e) => {
+    const mk = mapKey(e);
+    if (!mk) return;
+    e.preventDefault();
+
+    if (!key[mk]) pressed[mk] = true;
+    key[mk] = true;
+
+    if (triggerVirtualButton(mk)) return;
+  }, { passive: false });
+
+  window.addEventListener('keyup', (e) => {
+    const mk = mapKey(e);
+    if (!mk) return;
+    e.preventDefault();
+    key[mk] = false;
+  }, { passive: false });
+
+  const stage = document.getElementById('stage');
+  stage.addEventListener('contextmenu', (e) => e.preventDefault());
+
+  document.querySelectorAll('[data-k]').forEach((el) => {
+    const k = el.getAttribute('data-k');
+    function down(ev) {
+      ev.preventDefault();
+      if (triggerVirtualButton(k)) return;
+      if (!key[k]) pressed[k] = true;
+      key[k] = true;
+    }
+    function up(ev) {
+      ev.preventDefault();
+      key[k] = false;
+    }
+    el.addEventListener('pointerdown', down, { passive: false });
+    el.addEventListener('pointerup', up, { passive: false });
+    el.addEventListener('pointercancel', up, { passive: false });
+    el.addEventListener('pointerleave', up, { passive: false });
+  });
+
+  canvas.addEventListener('pointerdown', (ev) => {
+    ev.preventDefault();
+    if (!started) doStart();
+    if (paused) return;
+    mouseDown = true;
+    const p = worldFromClient(ev);
+    cx = p.x;
+    cy = p.y;
+    if (Math.abs(p.y - nozzle.y) <= 5 && Math.abs(p.x - nozzle.x) <= 8 && p.y < SANDBOX_H) {
+      nozzleDrag = true;
+      nozzle.x = clamp(p.x, 8, sandboxXMax() - 8);
+      canvas.setPointerCapture(ev.pointerId);
+      lastMouse = p;
+      return;
+    }
+    const hudHit = hudHitAt(p.x, p.y);
+    if (applyHudHit(hudHit, true)) {
+      lastMouse = p;
+      canvas.setPointerCapture(ev.pointerId);
+      syncPanels();
+      return;
+    }
+    applyToolAt(p.x, p.y, null);
+    lastMouse = p;
+    canvas.setPointerCapture(ev.pointerId);
+  }, { passive: false });
+
+  canvas.addEventListener('pointermove', (ev) => {
+    const p = worldFromClient(ev);
+    cx = p.x;
+    cy = p.y;
+    updateCanvasTooltip(p.x, p.y);
+    if (!mouseDown || paused || !started) {
+      lastMouse = p;
+      return;
+    }
+    if (nozzleDrag) {
+      nozzle.x = clamp(p.x, 8, sandboxXMax() - 8);
+      lastMouse = p;
+      return;
+    }
+
+    if (p.y < SANDBOX_H && (settings.tool === 'fling' || settings.tool === 'spray' || settings.tool === 'pull')) applyToolAt(p.x, p.y, lastMouse);
+    lastMouse = p;
+  }, { passive: false });
+
+  function pointerUp(ev) {
+    mouseDown = false;
+    nozzleDrag = false;
+    lastMouse = null;
+    if (ev && ev.pointerId !== undefined) {
+      try { canvas.releasePointerCapture(ev.pointerId); } catch (_) {}
+    }
+  }
+
+  canvas.addEventListener('pointerup', pointerUp, { passive: false });
+  canvas.addEventListener('pointercancel', pointerUp, { passive: false });
+
+  document.getElementById('startBtn').addEventListener('click', doStart);
+  document.getElementById('continueBtn').addEventListener('click', () => setPaused(false));
+  document.getElementById('restartBtn').addEventListener('click', () => {
+    clearWorld();
+    setPaused(false);
+  });
+
+  syncPanels();
+
+  let last = performance.now();
+  function frame(t) {
+    const dt = Math.min(50, t - last);
+    last = t;
+
+    if (started && !paused) {
+      if (HUD.editing) adjustHudEditing();
+      else moveCursor();
+      updateBombs(dt);
+      const steps = Math.min(MAX_STEPS, 1 + ((dt / 16.7) | 0));
+      for (let s = 0; s < steps; s++) stepSand();
+    }
+
+    draw();
+    for (const k in pressed) pressed[k] = false;
+    requestAnimationFrame(frame);
+  }
+
+  clearWorld();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
