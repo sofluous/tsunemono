@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="320" viewBox="0 0 480 320">
+  <defs>
+    <pattern id="vias" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="4" cy="4" r="1.8" fill="#b7bd81"/><circle cx="4" cy="4" r=".8" fill="#142e2a"/></pattern>
+    <pattern id="pins" width="8" height="8" patternUnits="userSpaceOnUse"><path d="M1 0v8" stroke="#bbc3a5" stroke-width="3"/></pattern>
+  </defs>
+  <rect width="480" height="320" fill="#173e3b"/>
+  <rect x="8" y="8" width="464" height="304" rx="12" fill="none" stroke="#6e9b79" stroke-width="2"/>
+  <rect width="480" height="320" fill="url(#vias)" opacity=".3"/>
+  <g fill="none" stroke="#8aa777" stroke-width="2" opacity=".8">
+    <path d="M0 32h64l28 28h100l28-28h120l32 32h108M0 42h60l28 28h108l28-28h112l32 32h112M0 52h56l28 28h116l28-28h104l32 32h116"/>
+    <path d="M32 0v110l36 36v126h84l40-40h104l40 40h112v48M42 0v106l36 36v120h70l40-40h112l40 40h98v58M52 0v102l36 36v114h56l40-40h120l40 40h84v68"/>
+    <path d="M480 134H372l-22 22h-70M480 144H376l-22 22h-74M480 154H380l-22 22h-78M480 164H384l-22 22h-82M140 320v-32H20v-90h90l20-20h70M150 320v-42H30v-70h84l20-20h66"/>
+  </g>
+  <g fill="#c0b879"><circle cx="32" cy="30" r="7"/><circle cx="448" cy="290" r="7"/><circle cx="32" cy="290" r="7"/><circle cx="448" cy="30" r="7"/></g>
+  <g fill="#102925"><circle cx="32" cy="30" r="3"/><circle cx="448" cy="290" r="3"/><circle cx="32" cy="290" r="3"/><circle cx="448" cy="30" r="3"/></g>
+  <rect x="175" y="112" width="112" height="88" fill="url(#pins)"/>
+  <rect x="184" y="106" width="94" height="100" rx="3" fill="#0c1c21" stroke="#698079"/>
+  <path d="M194 116h72v80h-72z" fill="#182b31"/>
+  <g fill="#0d2326" stroke="#587a68"><rect x="330" y="100" width="52" height="32"/><rect x="110" y="108" width="40" height="32"/><rect x="342" y="216" width="54" height="24"/></g>
+  <g fill="#c1b881"><path d="M108 96h12v5h-12zm18 0h12v5h-12zm-18 54h12v5h-12zm18 0h12v5h-12zM312 112h10v5h-10zm0 12h10v5h-10zM350 200h12v5h-12zm20 0h12v5h-12z"/></g>
+  <g fill="#172d31" stroke="#a1bca1"><circle cx="104" cy="224" r="11"/><circle cx="130" cy="224" r="11"/></g>
+  <g stroke="#a1bca1"><path d="M98 224h12m-6-6v12m20-6h12m-6-6v12"/></g>
+  <g fill="#b5c9ae" font-family="monospace" font-size="7" opacity=".75"><text x="193" y="145">TSNM / 01</text><text x="193" y="160">SAND CORE</text><text x="53" y="27">REV B • PCB</text><text x="337" y="293">TP04 +3V3</text></g>
+</svg>

@@ -1,0 +1,19 @@
+# Tsunemono
+
+A static sand sandbox with a handheld controller shell. Open `index.html` in a modern browser, or serve this directory with a static web server. No build step or runtime package installation is required. Deploy `index.html`, `styles/` and `assets/` together; tests and this README are not runtime inputs.
+
+Use the D-pad or arrow keys to move, A/Space to interact, B/X to return to the cursor, Select/Z to cycle sections, and Start/P to pause. Slide a held thumb across the D-pad to change digital direction; distance does not change speed. Pause contains scrolling help inside the screen; Start/Resume also resumes. Tab navigates controls. Small header arrows cycle material treatments in both directions, wrapping without restarting the simulation; storage is optional. Classic is the default for new/invalid preferences; existing saved selections remain valid.
+
+Portrait groups Select and Start/Pause side by side between screen and gameplay controls, with a 16px gap. Landscape places one above each grip. Their 86x44px targets remain outside gameplay frames with at least 28px clearance. Theme arrows have no visible labels but retain accessible names, hidden theme status and 44px targets. Grip frames stay clear of the raised bezel; rounded D-pad artwork retains the fixed digital hit surface. Speakers sit in the footer, separate from play controls; A/B panels have no screws. Decorative fasteners and interior layers ignore input; edge dials/toggles/keys sit beneath the console on a lower sibling layer inside `.consoleAssembly`.
+
+- `index.html`: markup, simulation, rendering and input.
+- `styles/console.css`: shared responsive geometry, local fonts and semantic help/settings styles.
+- `styles/skins.css`: physically distinct controller treatments: Classic molded violet, Pocket Prototype ribbed lime, Studio Toy enamel, Neon Candy translucent plastic, Field Alloy machined aluminum, Expedition rugged polymer and Prism layered acrylic. Cosmetic shapes, textures, highlights and accents vary without changing control positions or digital input.
+- `assets/fonts/`: original Silkscreen regular/bold, self-hosted from the Google Fonts repository (`ofl/silkscreen`); SIL Open Font License in `OFL.txt`. Font files are runtime inputs; no external font request is required.
+- `assets/pcb.svg`: authored repeating circuit texture below translucent covers; required by skins.css. Prism adds clear layers/rainbow edge light; Pocket blurs/dims its interior beneath a luminous green cover. The display stays opaque and recessed beneath a raised rim/cast-shadow layer.
+- `tests/controls.test.cjs`: dependency-free Node checks; run `node --test tests/controls.test.cjs` from this directory (validated with Node 24).
+- `tests/browser.cjs`: browser integration checks; requires an installed Playwright package and Microsoft Edge. Run `node tests/browser.cjs`; optionally set `PLAYWRIGHT_PATH` to an existing Playwright package folder and `ARTIFACT_DIR` to a screenshot destination. The harness serves the HTML, styles and fonts on a temporary local port and closes the server/browser afterward.
+
+No configured build or lint workflow. Physical mobile testing remains necessary for native touch callouts and thumb reach. Optional local workspace [notes and QA](../_docs/README.md) are outside this repository and are not required to run the app.
+
+The shell's materials, cross D-pad and circular action buttons are intentional product identity exceptions to generic app chrome. Help/settings use standalone `--ds-*` semantic surface/text/border/accent/focus tokens; each skin supplies their values. `--shell*`, `--rim` and `--button-*` describe physical controller materials. Simulation/HUD colors remain render content, independent of shell choice. Presets share geometry and input behavior. The app does not import workspace Design System files at runtime.

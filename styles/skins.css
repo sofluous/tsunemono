@@ -1,0 +1,177 @@
+/* Material treatments intentionally vary construction while preserving input geometry. */
+#console { isolation: isolate; }
+#console::before, #console::after { content: ''; position: absolute; pointer-events: none; z-index: -1; }
+.clusterBody { position: relative; }
+.clusterBody::before, .clusterBody::after { content: ''; position: absolute; pointer-events: none; z-index: -1; }
+
+/* Original molded violet console: stepped plastic, raised grip panels, gray cross. */
+:root[data-skin='classic'] {
+  --shell: #6f78be; --shell-hi: #a0a8df; --shell-lo: #4d568f;
+  --shell-ink: #f1f3ff; --shell-line: #39416f; --rim: #53628c;
+  --button-a: #36b8b2; --button-b: #cd5261;
+  --ds-bg: #c7df95; --ds-bg-elevated: #d8edaf; --ds-text: #1d2c1b;
+  --ds-text-muted: #31462b; --ds-border: #4f6f3d; --ds-accent: #294023; --ds-focus: #ffe88b;
+}
+[data-skin='classic'] #console {
+  border-radius: 32px; border-color: #39416f;
+  background: linear-gradient(180deg, #a0a8df 0%, #7f89cd 18%, #6f78be 19%, #5e68a9 80%, #4d568f 81%);
+  box-shadow: inset 0 4px 0 #c3caf3, inset 0 -5px 0 #353c69, inset 0 0 0 3px #8f99d5, 0 24px 60px #0008;
+}
+[data-skin='classic'] .clusterBody::before {
+  inset: -4px -3px; border: 2px solid #39416f; border-radius: 18px;
+  background: linear-gradient(#8e99d3, #606bb1 28%, #505b9e);
+  box-shadow: inset 0 2px 0 #c2caf0, inset 0 -3px 0 #3c467e;
+}
+[data-skin='classic'] .padCoreH { background: linear-gradient(145deg, #eceff7, #b9bcc7 30%, #858b9b 80%, #5d6576); }
+[data-skin='classic'] .btn { color: #303b53; text-shadow: 0 1px #fff6; }
+[data-skin='classic'] .pad::after { background: #9ba3b3; box-shadow: inset 0 2px 4px #0005; }
+[data-skin='classic'] .aBtn, [data-skin='classic'] .bBtn { background: radial-gradient(circle at 35% 25%, #fff8, transparent 35%), var(--button-a); border: 3px solid #254c59; }
+[data-skin='classic'] .bBtn { background-color: var(--button-b); border-color: #672f44; }
+[data-skin='classic'] #stage { outline-color: #5a6794; box-shadow: 0 0 0 12px #3d4974, 0 15px 25px #0005; border-radius: 12px; }
+
+/* Pocket prototype: smoked display hood and visible ribs under a lime lower shell. */
+[data-skin='pocket'] #console { border-radius: 12px 12px 32px 32px; background: linear-gradient(180deg, #202c2c 0 22%, #829445 22% 23%, #cadc86 23%, #93ab57 90%, #708b3c); }
+[data-skin='pocket'] .consoleHeader { color: #e4edc5; }
+[data-skin='pocket'] #console::before { inset: 24% 10px 10px; border: 1px solid #e5ff9c60; border-radius: 5px 5px 24px 24px; background: repeating-linear-gradient(90deg, transparent 0 28px, #465d251c 29px 31px, transparent 32px 48px); }
+[data-skin='pocket'] .padWrap { border-radius: 50%; box-shadow: 0 0 0 8px #4a612329, inset 0 0 0 1px #e9ffab60; }
+[data-skin='pocket'] #stage { outline-color: #162122; box-shadow: 0 0 0 12px #3b4c46, 0 14px 24px #0005; }
+[data-skin='pocket'] .speaker { background: repeating-linear-gradient(0deg, #293d1d 0 2px, transparent 2px 5px); height: 18px; }
+
+/* Studio toy: flat warm enamel, exposed edge rail and a knurled side dial. */
+[data-skin='studio'] #console { border-radius: 12px; background: linear-gradient(90deg, #d4d8d2 0 6px, #f5f2e7 7px calc(100% - 9px), #aeb5b1 calc(100% - 8px), #e3e8e2); box-shadow: inset 0 1px #fff, inset 0 -3px #929c97, 0 20px 40px #0006; }
+[data-skin='studio'] #console::after { width: 8px; height: 52px; right: 0; top: 25%; border-radius: 2px; background: repeating-linear-gradient(0deg, #8b9592 0 1px, #e4e8e2 1px 3px); border: 1px solid #8c9691; }
+[data-skin='studio'] .aBtn, [data-skin='studio'] .bBtn { border-radius: 42%; box-shadow: inset 0 2px 1px #fff7, inset 0 -2px 1px #0004, 0 3px 0 #868b88; }
+[data-skin='studio'] .speaker { width: 42px; background-size: 5px 5px; }
+[data-skin='studio'] #stage { border-radius: 2px; outline-color: #454f50; box-shadow: 0 0 0 12px #b2b8b0, 0 6px 10px #0003; }
+
+/* Candy shell: neon transparent polycarbonate over traces and screw bosses. */
+:root[data-skin='candy'] {
+  --shell-ink: #ecffb1; --shell-line: #c1fa63; --rim: #38264e;
+  --button-a: #b4f13d; --button-b: #f26aa7;
+  --ds-bg: #271733; --ds-bg-elevated: #3a244b; --ds-text: #f4ebff;
+  --ds-text-muted: #dbcbe8; --ds-border: #a874c6; --ds-accent: #c8f668; --ds-focus: #e8ff9f;
+}
+[data-skin='candy'] #console {
+  border-radius: 42px 42px 52px 52px; border-color: #baf271;
+  background: radial-gradient(ellipse at 8% 2%, #ffb7ff9c, transparent 46%), linear-gradient(140deg, #c139d3c9, #682ba0e0 45%, #342962ef), #173e37;
+  box-shadow: inset 0 0 0 4px #e5ff9b66, inset 0 0 0 8px #4a1e6f99, inset 0 10px 12px #fff3, 0 0 22px #9de74222, 0 24px 60px #0008;
+}
+[data-skin='candy'] #console::before {
+  inset: 12px; border-radius: 32px 32px 42px 42px;
+  background: radial-gradient(circle at 8px 8px, #d4fca580 0 3px, #ddfabb20 4px 8px, transparent 9px), radial-gradient(circle at calc(100% - 8px) calc(100% - 8px), #d4fca580 0 3px, #ddfabb20 4px 8px, transparent 9px), repeating-linear-gradient(90deg, transparent 0 39px, #e5a3ff12 40px 42px, transparent 43px 65px);
+  border: 1px solid #e5a3ff66;
+}
+[data-skin='candy'] .clusterBody::before { inset: 0; border-radius: 45%; background: repeating-linear-gradient(0deg, #a5ff4b10 0 1px, transparent 1px 13px); box-shadow: inset 0 0 0 1px #ebc3ff30; }
+[data-skin='candy'] .padCoreH { background: linear-gradient(140deg, #d5ff81dd, #75bf3fcc 55%, #325a23); }
+[data-skin='candy'] .btn { color: #183222; }
+[data-skin='candy'] .aBtn { color: #243415; text-shadow: none; background: radial-gradient(circle at 30% 20%, #ffffffe0, transparent 38%), #b4f13dcf; }
+[data-skin='candy'] .bBtn { background: radial-gradient(circle at 30% 20%, #ffffffa0, transparent 38%), #f26aa7c9; }
+[data-skin='candy'] #stage { outline-color: #3b214d; box-shadow: 0 0 0 12px #a0d94e70, 0 15px 28px #180d36c0; border-radius: 18px; }
+
+/* Field alloy: brushed aluminum, chamfered faceplate, slotted fasteners. */
+:root[data-skin='alloy'] {
+  color-scheme: light; --shell-ink: #26383c; --shell-line: #73848b; --rim: #26363d;
+  --button-a: #d77c22; --button-b: #485c65;
+  --ds-bg: #202d32; --ds-bg-elevated: #34454c; --ds-text: #f5ead3;
+  --ds-text-muted: #d1c8b4; --ds-border: #899a9f; --ds-accent: #f6bd62; --ds-focus: #ffdd81;
+}
+[data-skin='alloy'] #console { border-radius: 8px; background: repeating-linear-gradient(0deg, #ffffff15 0 1px, #35434e12 1px 2px, transparent 2px 4px), linear-gradient(110deg, #758991, #eff4f2 12%, #b1bfc2 40%, #e1e7e3 70%, #7f949d); box-shadow: inset 0 0 0 2px #ecf5f1, inset 0 0 0 4px #60737b, 0 20px 40px #0008; }
+[data-skin='alloy'] #console::before { inset: 7px; border: 1px solid #576f7860; border-radius: 3px; }
+[data-skin='alloy'] #console::after { inset: 5px; background: linear-gradient(90deg, transparent 0 4px, #384b52 4px 6px, transparent 6px 10px) left top / 10px 10px no-repeat, radial-gradient(circle, #c4ced0 0 3px, #6d828a 3px 4px, transparent 5px) left top / 10px 10px no-repeat, radial-gradient(circle, #c4ced0 0 3px, #6d828a 3px 4px, transparent 5px) right bottom / 10px 10px no-repeat; }
+[data-skin='alloy'] .clusterBody::before { inset: -2px 0; border: 1px solid #5b7079; border-radius: 6px; background: linear-gradient(120deg, #4e636b, #283d45); box-shadow: inset 0 1px #ecf4ed60; }
+[data-skin='alloy'] .aBtn, [data-skin='alloy'] .bBtn { border: 3px solid #c8d2d0; box-shadow: 0 0 0 2px #3f535c, inset 0 2px #ffffff50, 0 5px 6px #0005; }
+[data-skin='alloy'] .padCoreH { background: linear-gradient(135deg, #b3c4c7, #657d87 50%, #263d49); }
+[data-skin='alloy'] #stage { border-radius: 2px; outline-color: #2c414c; box-shadow: 0 0 0 12px #7c939c, 0 8px 12px #0005; }
+[data-skin='alloy'] .speaker { background: repeating-linear-gradient(90deg, #263e49 0 2px, transparent 2px 5px); }
+
+/* Expedition: molded rugged polymer, rubber bumpers, grip ribs and safety marks. */
+:root[data-skin='rugged'] {
+  --shell-ink: #e7e5d5; --shell-line: #151e1d; --rim: #172222;
+  --button-a: #df9d22; --button-b: #65746c;
+  --ds-bg: #1c2725; --ds-bg-elevated: #334039; --ds-text: #f3eddc;
+  --ds-text-muted: #c2c8b9; --ds-border: #7b8e74; --ds-accent: #f0bb4b; --ds-focus: #ffe394;
+}
+[data-skin='rugged'] #console { border-radius: 18px; border: 1px solid #111b18; background: repeating-linear-gradient(45deg, #ffffff05 0 1px, transparent 1px 3px), linear-gradient(120deg, #68745c, #3e4d3c 45%, #2a392d); box-shadow: inset 0 0 0 5px #14231f, inset 0 0 0 7px #7e8e6e, 0 18px 35px #000a; }
+[data-skin='rugged'] #console::before { inset: 4px; border-radius: 14px; background: linear-gradient(90deg, #101d18 0 32px, transparent 32px calc(100% - 32px), #101d18 calc(100% - 32px)) top / 100% 12px no-repeat, linear-gradient(90deg, #101d18 0 32px, transparent 32px calc(100% - 32px), #101d18 calc(100% - 32px)) bottom / 100% 12px no-repeat; }
+[data-skin='rugged'] .clusterBody::before { inset: -4px -2px; border-radius: 12px; background: repeating-linear-gradient(0deg, #111e1a 0 3px, #27372f 3px 8px); box-shadow: inset 0 0 0 2px #17251f; }
+[data-skin='rugged'] .padCoreH { background: linear-gradient(130deg, #6d7866, #25372d 45%, #14231c); }
+[data-skin='rugged'] .aBtn, [data-skin='rugged'] .bBtn { border-radius: 16%; border: 3px solid #18271e; box-shadow: inset 0 0 0 2px #ffffff30, 0 4px 0 #102018; }
+[data-skin='rugged'] #stage { border-radius: 2px; box-shadow: 0 0 0 12px #7e8961, 0 0 0 14px #17251e; }
+[data-skin='rugged'] .speaker { background: repeating-linear-gradient(-45deg, #e4b13e 0 3px, #27362c 3px 7px); opacity: 0.8; height: 10px; }
+
+/* Prism: layered acrylic with spectral edge refraction and frosted control wells. */
+:root[data-skin='prism'] {
+  --shell-ink: #e8f3ff; --shell-line: #d9edffb0; --rim: #445266;
+  --button-a: #b3c9e0; --button-b: #c0b6db;
+  --ds-bg: #192438; --ds-bg-elevated: #2d3b52; --ds-text: #f0f5ff;
+  --ds-text-muted: #c8d6ec; --ds-border: #98acc8; --ds-accent: #b9e4ec; --ds-focus: #f5d7ff;
+}
+[data-skin='prism'] #console { border-radius: 22px; background: linear-gradient(135deg, #e7f8ff60, #6c89a330 35%, #ccecff50 70%, #b4a2d545), #35465b; box-shadow: inset 0 0 0 2px #f1fbffb0, inset 0 0 0 5px #aec3d055, inset 0 -8px 1px #9de6f780, 0 20px 50px #0007; }
+[data-skin='prism'] #console::before { inset: 5px; border-radius: 17px; border: 2px solid transparent; background: linear-gradient(110deg, transparent 10%, #74dfe870 22%, #d39cf270 34%, #fae69870 45%, transparent 60%) border-box; mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0); mask-composite: exclude; }
+[data-skin='prism'] #console::after { inset: 10px; border-radius: 12px; border: 1px solid #e8f6ff40; background: linear-gradient(120deg, #f5faff18, transparent 30% 65%, #deb6ff15); }
+[data-skin='prism'] .clusterBody::before { inset: -4px; border-radius: 50%; background: #d2eaff18; box-shadow: inset 0 1px 0 #fff6, inset 0 -2px 5px #d6e9ff30; }
+[data-skin='prism'] .padCoreH { background: linear-gradient(135deg, #e0f3ffaa, #7d9cb3aa, #ccbdedaa); }
+[data-skin='prism'] .btn { color: #203548; }
+[data-skin='prism'] .pad::after { background: #c6deeb70; }
+[data-skin='prism'] .aBtn, [data-skin='prism'] .bBtn { background: linear-gradient(135deg, #ffffffc0, #c8e6fa70 40%, #a9bfe080); color: #26384e; text-shadow: none; border: 1px solid #e9faff90; box-shadow: inset 0 0 0 3px #f5fbff40, 0 4px 0 #a0c5dc55, 0 6px 12px #10233766; }
+[data-skin='prism'] #stage { border-radius: 4px; outline-color: #8ca1b170; box-shadow: 0 0 0 12px #d6f5ff80, 0 0 0 14px #b7a4d660; }
+
+/* Small construction details stay inside the grip frames and clear of the display. */
+[data-skin='classic'] .clusterBody::after { width: 28px; height: 3px; bottom: 6px; left: 12px; border-radius: 2px; background: #bbc7ef; box-shadow: 0 4px #354478; }
+[data-skin='classic'] .pill { background: linear-gradient(#535d8e, #222c51); border-color: #293360; box-shadow: inset 0 2px #a9b4e180, inset 0 -3px #182344, 0 3px #354174; }
+[data-skin='pocket'] .clusterBody::after { width: 24px; height: 8px; bottom: -6px; left: 12px; border: 1px solid #526c2e; background: repeating-linear-gradient(90deg, #314e24 0 2px, #9dbc5260 2px 5px); box-shadow: 0 1px #e5f6b580; }
+[data-skin='pocket'] .pill { border-radius: 8px; background: linear-gradient(#41513a, #233124); border-color: #263c21; }
+[data-skin='studio'] .clusterBody::after { width: 14px; height: 14px; bottom: -6px; right: 8px; border-radius: 50%; background: radial-gradient(circle, #556763 0 1px, #d9dfd7 2px 5px, #7b8984 6px, transparent 7px); }
+[data-skin='studio'] .pill { border-radius: 8px; color: #354642; background: linear-gradient(#fefdf5, #d6dcd3); border-color: #87948b; box-shadow: inset 0 2px #fff, 0 3px #9da89f; }
+[data-skin='candy'] .clusterBody::after { inset: 6px 10px; border-radius: 30px; border-left: 2px solid #edffb54d; border-bottom: 1px solid #edffb52d; }
+[data-skin='candy'] .pill { border-radius: 18px; color: #efffc3; border-color: #b4e56b90; background: linear-gradient(140deg, #bb7edea0, #44246a); box-shadow: inset 0 2px #f3d9ff80, inset 0 -3px #2c154c, 0 3px #24312380; }
+[data-skin='alloy'] .clusterBody::after { width: 20px; height: 4px; bottom: 6px; right: 8px; background: linear-gradient(90deg, #d9b165 0 3px, transparent 3px 5px, #9eafb6 5px 8px, transparent 8px 10px, #9eafb6 10px); }
+[data-skin='alloy'] .pill { border-radius: 5px; border-color: #374b55; color: #edf3f1; background: repeating-linear-gradient(0deg, #ffffff12 0 1px, transparent 1px 3px), linear-gradient(#617986, #314954); box-shadow: inset 0 2px #c8d8dc, inset 0 -3px #233943, 0 3px #5c737c; }
+[data-skin='rugged'] .clusterBody::after { width: 20px; height: 7px; bottom: 4px; left: 10px; background: repeating-linear-gradient(-45deg, #d8a22c 0 3px, #14251d 3px 6px); border: 1px solid #14251d; }
+[data-skin='rugged'] .pill { border-radius: 6px; border-color: #14251d; background: linear-gradient(#51634a, #253b2b); box-shadow: inset 0 0 0 2px #8d9c6e50, 0 3px #102017; }
+[data-skin='prism'] .clusterBody::after { inset: 5px -2px; border-radius: 40%; border-top: 1px solid #e5faff90; border-bottom: 2px solid #a5c6e075; }
+[data-skin='prism'] .pill { border-radius: 12px; border-color: #d0e9f3a0; color: #172f42; background: linear-gradient(130deg, #eefaffb0, #a1bfd2a0 45%, #d3bfe0a0); box-shadow: inset 0 2px #f3faffc0, inset 0 -3px #86b3cc90, 0 3px #9fc5db60; }
+
+/* Raised rim catches light; its inner lip casts a shadow onto the recessed display. */
+:root[data-skin] #stage {
+  outline: 8px solid var(--rim);
+  box-shadow: 0 -3px 0 10px #ffffff45, 0 1px 0 13px var(--rim), 0 9px 10px 10px #00000070;
+}
+#stage::before { content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none; border-radius: inherit; box-shadow: inset 0 10px 12px -3px #000e, inset 6px 0 8px -4px #000b, inset -3px -3px 6px #0007; }
+#stage::after { content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none; border-radius: inherit; border-bottom: 1px solid #d8ecff40; border-right: 1px solid #d8ecff25; }
+
+/* Hardware is decorative: never a focus stop or pointer target. */
+.gripHardware, .edgeHardware, .internals { pointer-events: none; }
+.gripHardware { position: absolute; inset: 0; }
+.screw { position: absolute; width: 12px; height: 12px; border-radius: 50%; background: linear-gradient(45deg, transparent 43%, #263632 44% 55%, transparent 56%), radial-gradient(circle at 35% 25%, #f2f5e4, #788b85 60%, #354a45 68%, #bfd0bd 72%); box-shadow: 0 1px 2px #0007; }
+.screwTop { left: 6px; top: 6px; }
+.screwBottom { right: 6px; bottom: 6px; }
+[data-skin='classic'] .screw { width: 9px; height: 9px; opacity: .6; }
+[data-skin='alloy'] .screw, [data-skin='rugged'] .screw { width: 14px; height: 14px; }
+.edgeHardware { position: absolute; inset: 0; z-index: 0; }
+.edgeDial { position: absolute; right: -7px; top: 30%; width: 14px; height: 44px; border: 1px solid #62716b; border-radius: 4px; background: repeating-linear-gradient(0deg, #c1cbc4 0 2px, #465a55 2px 4px); box-shadow: 2px 2px 3px #0006; }
+.edgeToggle { position: absolute; top: -6px; left: 22%; width: 34px; height: 10px; border: 2px solid #293f38; border-radius: 3px; background: linear-gradient(90deg, #aebeb0 0 35%, #263c34 36%); }
+.edgeKeys { position: absolute; left: -5px; top: 38%; width: 8px; height: 28px; background: linear-gradient(#344c43 0 40%, transparent 41% 60%, #344c43 61%); border-radius: 3px; }
+[data-skin='classic'] .edgeDial { width: 10px; right: -4px; background: repeating-linear-gradient(0deg, #a2add5 0 2px, #424f82 2px 4px); }
+[data-skin='candy'] .edgeToggle { background: linear-gradient(90deg, #c7f575 0 40%, #69237c 41%); border-color: #4a3065; }
+[data-skin='rugged'] .edgeDial { background: repeating-linear-gradient(0deg, #273d2b 0 3px, #8b9b6d 3px 5px); border-color: #13271a; }
+
+/* Visible circuit layers sit below the clear cover, with component silhouettes above. */
+.internals { display: none; position: absolute; inset: 12px; z-index: -2; border-radius: inherit; overflow: hidden; background: #173e3b url('../assets/pcb.svg') center / 480px 320px repeat; box-shadow: inset 0 0 28px 12px #061e21a0; }
+.chip { position: absolute; background: #101c24; border: 4px double #6f847c; border-radius: 4px; box-shadow: 0 7px 10px #0009; }
+.chipMain { left: 20%; bottom: 9%; width: 28%; height: 18%; rotate: -4deg; }
+.chipPower { right: 12%; top: 16%; width: 18%; height: 11%; }
+.boardRibbon { position: absolute; left: 48%; bottom: -5%; width: 16%; height: 33%; background: repeating-linear-gradient(90deg, #94754190 0 2px, #d9bd7470 2px 4px); rotate: -14deg; }
+[data-skin='pocket'] .internals, [data-skin='prism'] .internals, [data-skin='candy'] .internals { display: block; }
+[data-skin='pocket'] #console { background: #879f4840; box-shadow: inset 0 0 0 3px #defc8e90, inset 0 0 22px 8px #dfff8250, 0 0 30px #9ed54920, 0 24px 60px #0008; }
+[data-skin='pocket'] .internals { opacity: .65; filter: blur(4px) brightness(.48) saturate(.55); }
+[data-skin='pocket'] #console::before { inset: 4px; border-radius: inherit; background: linear-gradient(180deg, #112824e0 0 15%, #c4f56660 16% 25%, #c6f76b35 45%, #a0d94e70), repeating-linear-gradient(90deg, transparent 0 30px, #dfff7d25 31px 33px, transparent 34px 54px); border: 2px solid #e5ff9c80; box-shadow: inset 0 0 15px #cbff7455; }
+[data-skin='pocket'] .clusterBody::before { content: ''; position: absolute; inset: -4px 0; border-radius: 20px; background: #b8ed5e25; box-shadow: inset 0 1px #dcff9260, inset 0 -2px #355a2640; }
+
+[data-skin='prism'] #console { background: #9ed3ef20; box-shadow: inset 0 0 0 2px #f1fbffcc, inset 0 0 0 6px #b8e5fa45, inset 0 -9px 2px #a4d9ff70, 0 22px 50px #0008; }
+[data-skin='prism'] .internals { opacity: .72; filter: saturate(.6); background-color: #183a48; }
+[data-skin='prism'] #console::before { inset: 0; border-radius: inherit; padding: 7px; border: 0; background: conic-gradient(from 20deg, #b4f6ff, #b5b4ff 12%, #ffb1e4 24%, #ffd792 36%, #b3ffc2 49%, #98dfff 62%, #d3acff 75%, #ffb4be 88%, #b4f6ff); opacity: .85; mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask-composite: exclude; box-shadow: 0 0 12px #d9eaff; }
+[data-skin='prism'] #console::after { inset: 7px; border-radius: inherit; background: linear-gradient(120deg, #e3faff55, #f5fdff08 25% 60%, #b9caff38), linear-gradient(25deg, transparent 47%, #d7caff35 48%, transparent 54%); border: 1px solid #f5fdff80; box-shadow: inset 0 0 14px #b6dcff30; }
+[data-skin='prism'] .clusterBody::before { background: #d2eaff12; }
+[data-skin='prism'] .edgeDial { background: repeating-linear-gradient(0deg, #d2eaffb0 0 2px, #738ab870 2px 4px); border-color: #e4f8ffaa; }
+[data-skin='candy'] .internals { opacity: .35; filter: hue-rotate(45deg); }

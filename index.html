@@ -1,421 +1,99 @@
 <!doctype html>
-<html lang='en'>
+<html lang='en' data-skin='classic'>
 <head>
 <meta charset='utf-8' />
-<meta name='viewport' content='width=device-width,initial-scale=1,maximum-scale=1' />
-<title>Sand Visualizer Toy</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap');
-  :root {
-    --bg: #080c16;
-    --console-shell: #6f78be;
-    --console-shell-hi: #8f96d6;
-    --console-shell-lo: #4d568f;
-    --console-panel: #5f68aa;
-    --console-panel-hi: #7f88ca;
-    --console-panel-lo: #454f86;
-    --console-border: #39416f;
-    --console-text: #eef1ff;
-    --console-dpad: #b9bcc7;
-    --console-dpad-hi: #d5d8e0;
-    --console-dpad-lo: #787d8d;
-    --console-util: #171717;
-    --console-util-text: #c8ccd6;
-    --console-a: #54d6d0;
-    --console-a-hi: #92f0ec;
-    --console-a-lo: #24908c;
-    --console-b: #d95763;
-    --console-b-hi: #f29aa4;
-    --console-b-lo: #8e2c3a;
-    --text: #eef7ff;
-    --sideW: 146px;
-    --sideGap: 10px;
-    --vSpace: 126px;
-    --playW: min(1500px, calc(100vw - (var(--sideW) * 2) - (var(--sideGap) * 2) - 10px), calc((100vh - var(--vSpace)) * 16 / 9));
-    --dmg0: #d8f3a3;
-    --dmg1: #98b86e;
-    --dmg2: #4f6f3d;
-    --dmg3: #1d2c1b;
-  }
-  html, body {
-    height: 100%;
-    margin: 0;
-    overflow: hidden;
-    background: #05070d;
-    color: var(--text);
-    font-family: Impact, Haettenschweiler, 'Arial Black', sans-serif;
-    overscroll-behavior: none;
-  }
-  #wrap {
-    position: relative;
-    height: 100dvh;
-    display: grid;
-    place-items: center;
-    padding: 4px;
-    box-sizing: border-box;
-    overflow: hidden;
-    background:
-      radial-gradient(circle at 50% -12%, #3b5f9f66 0%, #122038 34%, #060911 78%),
-      linear-gradient(180deg, #0f1730 0%, #05070d 68%);
-  }
-  #wrap::before {
-    content: '';
-    position: absolute;
-    left: -12%;
-    right: -12%;
-    top: 28%;
-    bottom: -30%;
-    background:
-      linear-gradient(180deg, #74b7ff20 0%, transparent 12%),
-      repeating-linear-gradient(90deg, #59a8ff33 0 2px, transparent 2px 52px),
-      repeating-linear-gradient(180deg, #59a8ff2a 0 2px, transparent 2px 52px);
-    transform: perspective(980px) rotateX(76deg);
-    transform-origin: center bottom;
-    opacity: 0.74;
-    pointer-events: none;
-  }
-  #wrap::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-  }
-  #console {
-    display: grid;
-    grid-template-rows: auto auto;
-    gap: 4px;
-    justify-items: stretch;
-    width: min(1880px, calc(100vw - 2px));
-    max-height: calc(100dvh - 8px);
-    padding: 4px;
-    box-sizing: border-box;
-    border-radius: 34px;
-    border: 4px solid var(--console-border);
-    background:
-      linear-gradient(180deg, var(--console-shell-hi) 0 18%, var(--console-shell) 18% 68%, var(--console-shell-lo) 68% 100%);
-    box-shadow:
-      inset 0 4px 0 #b9c0f2,
-      inset 0 -5px 0 #363d69,
-      0 22px 56px #00000073;
-  }
-  #midRow {
-    display: grid;
-    grid-template-columns: minmax(120px, var(--sideW)) minmax(0, 1fr) minmax(120px, var(--sideW));
-    align-items: stretch;
-    gap: 6px;
-    width: 100%;
-    justify-content: center;
-    min-width: 0;
-    padding: 0;
-    box-sizing: border-box;
-    border-radius: 30px;
-    border: 3px solid var(--console-border);
-    background:
-      linear-gradient(180deg, var(--console-panel-hi) 0 24%, var(--console-panel) 24% 70%, var(--console-panel-lo) 70% 100%);
-    box-shadow: inset 0 2px 0 #adb5ea, inset 0 -2px 0 #353c67;
-  }
-  #stage {
-    position: relative;
-    width: min(100%, var(--playW));
-    min-width: 0;
-    aspect-ratio: 16 / 9;
-    justify-self: center;
-    align-self: center;
-    background:
-      linear-gradient(180deg, #a3b3d94a 0%, #4b5f8d55 40%, #1d264066 100%);
-    border: 8px solid #6d7aa3;
-    border-radius: 24px;
-    overflow: hidden;
-    box-shadow:
-      inset 0 0 0 2px #d9ecff52,
-      inset 0 0 0 7px #2f3d6255,
-      inset 0 18px 26px #ffffff1b,
-      inset 0 -18px 24px #0b10211f,
-      0 14px 28px #00000059;
-    touch-action: none;
-  }
-  #stage::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 16px;
-    pointer-events: none;
-    background:
-      linear-gradient(180deg, #ffffff22 0%, transparent 18%, transparent 74%, #09101f33 100%),
-      radial-gradient(circle at 18% 12%, #d7e6ff22 0%, transparent 28%);
-  }
-  canvas { width: 100%; height: 100%; display: block; image-rendering: pixelated; }
-  .sideCluster {
-    width: 100%;
-    min-width: 0;
-    min-height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px;
-    box-sizing: border-box;
-    border-radius: 24px;
-    border: 3px solid var(--console-border);
-    background:
-      linear-gradient(180deg, var(--console-panel-hi) 0 22%, var(--console-panel) 22% 72%, var(--console-panel-lo) 72% 100%);
-    box-shadow: inset 0 2px 0 #b9c0f2, inset 0 -2px 0 #353c67;
-    overflow: hidden;
-  }
-  .clusterBody {
-    width: 100%;
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .glass {
-    border: 4px solid #8a430f;
-    background: linear-gradient(180deg, #ffe28e 0 22%, #eda934 22% 70%, #d8841e 70% 100%);
-    box-shadow: inset 0 3px 0 #fff2b7, inset 0 -3px 0 #844110, 0 6px 16px #00000047;
-    backdrop-filter: blur(3px);
-  }
-  .padWrap {
-    width: min(100%, 124px);
-    aspect-ratio: 1 / 1;
-    position: relative;
-    display: grid;
-    place-items: center;
-  }
-  .padCoreH, .padCoreV {
-    position: absolute;
-    border-radius: 22px;
-    border: 3px solid #6a6f7d;
-    background: linear-gradient(180deg, var(--console-dpad-hi) 0 18%, var(--console-dpad) 18% 66%, var(--console-dpad-lo) 66% 100%);
-    box-shadow: inset 0 2px 0 #f0f3f8, inset 0 -2px 0 #565b69, 0 3px 8px #00000038;
-  }
-  .padCoreH { width: 100%; height: 40%; }
-  .padCoreV { width: 40%; height: 100%; }
-  .pad {
-    width: 100%;
-    height: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1.2fr 1fr;
-    grid-template-rows: 1fr 1.2fr 1fr;
-    gap: 0;
-    pointer-events: auto;
-    user-select: none;
-    align-items: stretch;
-    justify-items: stretch;
-    position: relative;
-    z-index: 1;
-  }
-  .padSlot { width: 100%; height: 100%; display: grid; place-items: center; }
-  .btn {
-    border: 0;
-    background: transparent;
-    box-shadow: none;
-    color: #2f3440;
-    font-weight: 900;
-    display: grid;
-    place-items: center;
-    touch-action: none;
-    width: 100%;
-    height: 100%;
-    padding: 0;
-    font-size: 20px;
-  }
-  .action {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    align-items: center;
-    justify-content: center;
-    pointer-events: auto;
-    flex: 1;
-  }
-  .aBtn, .bBtn {
-    width: min(60px, 100%);
-    aspect-ratio: 1 / 1;
-    border-radius: 999px;
-    border: 4px solid #2d4f54;
-    background: radial-gradient(circle at 35% 30%, var(--console-a-hi) 0 10%, var(--console-a) 10% 30%, #2cb4ad 30% 50%, var(--console-a-lo) 50% 100%);
-    color: #113033;
-    box-shadow: inset 0 3px 0 #d3fffc, inset 0 -3px 0 #1d7070, 0 7px 12px #00000044;
-    font-size: 22px;
-    font-weight: 900;
-    display: grid;
-    place-items: center;
-    touch-action: none;
-  }
-  .bBtn {
-    border-color: #742c35;
-    background: radial-gradient(circle at 35% 30%, var(--console-b-hi) 0 10%, var(--console-b) 10% 30%, #bf4554 30% 50%, var(--console-b-lo) 50% 100%);
-    color: #fff1f2;
-  }
-  .pill {
-    width: min(100%, 88px);
-    height: 30px;
-    padding: 0 4px;
-    border-radius: 18px;
-    border: 3px solid #161616;
-    background: linear-gradient(180deg, #2a2a2a 0 24%, #111111 24% 100%);
-    color: var(--console-util-text);
-    font-size: 10px;
-    font-weight: 800;
-    display: grid;
-    place-items: center;
-    touch-action: none;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-  .clusterPill {
-    margin-top: 4px;
-    width: 100%;
-  }
-  .flowOn { color: #7cf2ff; }
-  .btn:hover, .pill:hover, .aBtn:hover, .bBtn:hover {
-    filter: brightness(1.08);
-  }
-  .btn:active, .pill:active, .aBtn:active, .bBtn:active {
-    transform: translateY(2px);
-    box-shadow: inset 0 1px 0 #6d7f91, inset 0 -1px 0 #0d161f;
-  }
-  .overlay {
-    position: absolute; inset: 0;
-    background: rgba(27, 40, 24, 0.78);
-    display: none;
-    place-items: center;
-    pointer-events: auto;
-    padding: clamp(10px, 2.8vw, 24px);
-    box-sizing: border-box;
-  }
-  .card {
-    width: min(78%, 58ch);
-    max-width: 100%;
-    max-height: 100%;
-    overflow: auto;
-    border: 4px solid #31462b;
-    border-radius: 0;
-    background: linear-gradient(180deg, #c7df95, #8ba564);
-    padding: clamp(10px, 2vw, 16px);
-    box-sizing: border-box;
-    box-shadow: inset 0 2px 0 #eff8cf, inset 0 -2px 0 #4d653d;
-    font-family: 'Silkscreen', 'Courier New', monospace;
-  }
-  .title { margin: 0 0 6px; font-size: clamp(14px, 1.7vw, 18px); font-weight: 700; color: #1d2c1b; }
-  .sub { margin: 0 0 10px; color: #31462b; line-height: 1.5; font-size: clamp(10px, 1.15vw, 12px); }
-  .row { display: flex; flex-wrap: wrap; gap: 8px; }
-  .cta {
-    border: 3px solid #31462b;
-    border-radius: 0;
-    background: linear-gradient(180deg, #d8f3a3, #8ba564);
-    color: #1d2c1b;
-    font-weight: 800;
-    padding: 10px 12px;
-    cursor: pointer;
-    font-family: 'Silkscreen', 'Courier New', monospace;
-  }
-  .hint { margin-top: 10px; color: #31462b; font-size: clamp(9px, 1vw, 11px); }
-  .srOnly {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-  }
-  @media (max-width: 920px) {
-    :root { --sideW: 122px; --sideGap: 8px; --vSpace: 140px; }
-    #midRow { gap: 8px; padding: 0; }
-    .card { width: min(84%, 52ch); }
-  }
-  @media (max-width: 780px) {
-    :root { --sideW: 98px; --sideGap: 6px; --vSpace: 152px; }
-    #console { gap: 4px; padding: 4px; }
-    #midRow { gap: 4px; padding: 0; }
-    #stage { width: min(100%, var(--playW)); }
-    .padWrap { width: min(100%, 98px); }
-    .btn { font-size: 16px; }
-    .aBtn, .bBtn { width: 50px; height: 50px; font-size: 16px; }
-    .pill { min-width: 0; font-size: 9px; height: 30px; }
-    .card { width: min(88%, 48ch); }
-  }
-  @media (max-width: 900px) and (orientation: landscape) {
-    :root { --sideW: 94px; --sideGap: 4px; --vSpace: 132px; }
-    #wrap { padding: 0; }
-    #console { gap: 4px; padding: 4px; }
-    #midRow { padding: 0; gap: 4px; }
-    .sideCluster { padding: 4px; }
-    .padWrap { width: min(100%, 76px); }
-    .padCoreH, .padCoreV { border-width: 2px; }
-    .btn { font-size: 14px; }
-    .aBtn, .bBtn { width: 38px; height: 38px; font-size: 12px; border-width: 3px; }
-    .pill { min-width: 0; height: 24px; font-size: 8px; border-width: 2px; }
-    .card { width: min(76%, 42ch); }
-  }
-</style>
+<meta name='viewport' content='width=device-width,initial-scale=1,viewport-fit=cover' />
+<title>Tsunemono - Sand Sandbox</title>
+<link rel="stylesheet" href="styles/console.css" />
+<link rel="stylesheet" href="styles/skins.css" />
 </head>
 <body>
 <div id='wrap'>
-  <div id='console'>
+ <div class='consoleAssembly'>
+    <div class='edgeHardware' aria-hidden='true'><i class='edgeDial'></i><i class='edgeToggle'></i><i class='edgeKeys'></i></div>
+  <main id='console' aria-label='Tsunemono sand sandbox'>
+    <div class='internals' aria-hidden='true'><i class='chip chipMain'></i><i class='chip chipPower'></i><i class='boardRibbon'></i></div>
+    <header class='consoleHeader'>
+      <div><span class='brand'>TSUNEMONO</span> <span class='model'>SAND INSTRUMENT / 01</span></div>
+      <div class='themeControls' role='group' aria-label='Console appearance'>
+        <button type='button' id='previousSkin' class='themeArrow' aria-label='Previous theme'>&#8249;</button>
+        <button type='button' id='nextSkin' class='themeArrow' aria-label='Next theme'>&#8250;</button>
+        <span id='themeStatus' class='srOnly' role='status'></span>
+      </div>
+    </header>
     <div id='midRow'>
-      <div class='sideCluster'>
-        <div class='clusterBody'>
+      <div class='sideCluster leftControls'>
+        <button type='button' class='pill' data-k='Select' aria-label='Select tool or settings section' inert>Select</button>
+        <div class='clusterBody' inert><div class='gripHardware' aria-hidden='true'><i class='screw screwTop'></i><i class='screw screwBottom'></i></div>
           <div class='padWrap' aria-label='dpad'>
             <div class='padCoreH'></div>
-            <div class='padCoreV'></div>
             <div class='pad'>
-              <div class='padSlot'></div><div class='padSlot'><div class='btn upBtn' data-k='ArrowUp' aria-label='Up'>&#9650;</div></div><div class='padSlot'></div>
-              <div class='padSlot'><div class='btn leftBtn' data-k='ArrowLeft' aria-label='Left'>&#9664;</div></div><div class='padSlot'></div><div class='padSlot'><div class='btn rightBtn' data-k='ArrowRight' aria-label='Right'>&#9654;</div></div>
-              <div class='padSlot'></div><div class='padSlot'><div class='btn downBtn' data-k='ArrowDown' aria-label='Down'>&#9660;</div></div><div class='padSlot'></div>
+              <div class='padSlot'></div><div class='padSlot'><button type='button' class='btn upBtn' data-k='ArrowUp' aria-label='Up'>&#9650;</button></div><div class='padSlot'></div>
+              <div class='padSlot'><button type='button' class='btn leftBtn' data-k='ArrowLeft' aria-label='Left'>&#9664;</button></div><div class='padSlot'></div><div class='padSlot'><button type='button' class='btn rightBtn' data-k='ArrowRight' aria-label='Right'>&#9654;</button></div>
+              <div class='padSlot'></div><div class='padSlot'><button type='button' class='btn downBtn' data-k='ArrowDown' aria-label='Down'>&#9660;</button></div><div class='padSlot'></div>
             </div>
           </div>
         </div>
-        <div class='pill clusterPill' data-k='Select'>Select</div>
       </div>
 
       <div id='stage'>
         <canvas id='c'></canvas>
+    <div class='overlay' id='startOverlay' style='display:grid;'>
+      <section class='card' aria-labelledby='welcomeTitle'>
+        <h1 class='title' id='welcomeTitle'>Sand Sandbox</h1>
+        <p class='sub'>D-pad moves. <b>A</b> uses your tool.<br /><b>B</b> returns. <b>Select</b> changes sections.</p>
+        <div class='row startRow'><button class='cta primary' id='startBtn'>Start</button></div>
+      </section>
+    </div>
+    <div class='overlay' id='pauseOverlay'>
+      <section class='card' aria-labelledby='pauseTitle'>
+        <h2 class='title' id='pauseTitle'>Paused</h2>
+        <details class='help'><summary>Controls &amp; help</summary>
+          <p>Slide and hold the D-pad to move. A uses the selected tool or selects a screen item. B leaves nozzle or settings editing. Select cycles Tools, Nozzle and Sand.</p>
+          <p>Select the nozzle with A: left/right moves it, up/down tilts it, and A toggles the flow. B returns to the cursor. You can also drag directly on the sand.</p>
+          <p>Keyboard: arrows move, Space/Enter uses A, X/Backspace uses B, Z/Shift selects, and P/Escape pauses. Tab moves focus between controls.</p>
+        </details>
+        <div class='row'><button class='cta' id='restartBtn'>Restart</button><button class='cta primary' id='continueBtn'>Continue</button></div>
+      </section>
+    </div>
 
-        <div class='overlay' id='startOverlay' style='display:grid;'>
-          <div class='card'>
-            <p class='title'>Sand Sandbox</p>
-            <p class='sub'>
-              Move the cursor with the D-pad. Press <b>A</b> to interact with sand, select a rail item, or focus the nozzle. While the nozzle is selected, left and right move it, up and down tilt it, <b>A</b> toggles spray, and <b>B</b> returns to the cursor.
-              Mouse/touch can still drag directly in the sandbox.
-            </p>
-            <div class='row'><button class='cta' id='startBtn'>Start</button></div>
-            <div class='hint'>Tools: Grab, Poke, Fling, Spray, Bomb (3s fuse), and Shove (scoop/drop).</div>
-          </div>
-        </div>
 
-        <div class='overlay' id='pauseOverlay'>
-          <div class='card'>
-            <p class='title'>Paused</p>
-            <p class='sub'>Continue or restart the sandbox.</p>
-            <div class='row'>
-              <button class='cta' id='continueBtn'>Continue</button>
-              <button class='cta' id='restartBtn'>Restart</button>
-            </div>
-          </div>
-        </div>
       </div>
 
-      <div class='sideCluster'>
-        <div class='clusterBody'>
+      <div class='sideCluster rightControls'>
+        <button type='button' class='pill' id='pauseBtn' data-k='Pause'>Start</button>
+        <div class='clusterBody' inert>
           <div class='action'>
-            <div class='bBtn' data-k='Back'>B</div>
-            <div class='aBtn' data-k='Action'>A</div>
+            <button type='button' class='bBtn' data-k='Back'>B</button>
+            <button type='button' class='aBtn' data-k='Action'>A</button>
           </div>
         </div>
-        <div class='pill clusterPill' id='pauseBtn' data-k='Pause'>Start</div>
       </div>
     </div>
-  </div>
+    <footer class='consoleFooter' aria-hidden='true'><div class='speaker'></div><div class='speaker'></div></footer>
+  </main>
+ </div>
 </div>
 
 <script>
 (() => {
+  const skins = ['classic', 'pocket', 'studio', 'candy', 'alloy', 'rugged', 'prism'];
+  const skinNames = ['Classic', 'Pocket Prototype', 'Studio Toy', 'Neon Candy', 'Field Alloy', 'Expedition', 'Prism'];
+  function applySkin(value) {
+    const skin = skins.includes(value) ? value : 'classic';
+    document.documentElement.dataset.skin = skin;
+    document.getElementById('themeStatus').textContent = skinNames[skins.indexOf(skin)];
+  }
+  function cycleSkin(direction) {
+    const index = skins.indexOf(document.documentElement.dataset.skin);
+    const skin = skins[(index + direction + skins.length) % skins.length];
+    applySkin(skin);
+    try { localStorage.setItem('tsunemono.skin', skin); } catch (_) { /* Session choice still works without storage. */ }
+  }
+  try { applySkin(localStorage.getItem('tsunemono.skin')); } catch (_) { applySkin('classic'); }
+  document.getElementById('previousSkin').addEventListener('click', () => cycleSkin(-1));
+  document.getElementById('nextSkin').addEventListener('click', () => cycleSkin(1));
+
   const GW = 240;
   const GH = 135;
   const EMPTY = 0;
@@ -1432,7 +1110,7 @@
     if (k === ' ' || k === 'Enter') return 'Action';
     if (k === 'Escape' || k === 'p' || k === 'P') return 'Pause';
     if (k === 'Backspace' || k === 'x' || k === 'X') return 'Back';
-    if (k === 'Tab' || k === 'z' || k === 'Z' || k === 'Shift') return 'Select';
+    if (k === 'z' || k === 'Z' || k === 'Shift') return 'Select';
     if (k === 'ArrowUp' || k === 'ArrowDown' || k === 'ArrowLeft' || k === 'ArrowRight') return k;
     return null;
   }
@@ -1484,12 +1162,21 @@
     if (started) return;
     started = true;
     document.getElementById('startOverlay').style.display = 'none';
+    document.getElementById('pauseBtn').textContent = 'Pause';
+    document.querySelectorAll('.clusterBody').forEach(el => { el.inert = false; });
+    document.querySelector('[data-k="Select"]').inert = false;
+    document.getElementById('pauseBtn').focus();
   }
 
   function setPaused(v) {
     paused = v;
+    resetControls();
+    document.querySelectorAll('.clusterBody').forEach(el => { el.inert = paused; });
+    document.querySelector('[data-k="Select"]').inert = paused;
     document.getElementById('pauseOverlay').style.display = paused ? 'grid' : 'none';
-    document.getElementById('pauseBtn').textContent = paused ? 'Resume' : 'Start';
+    document.getElementById('pauseBtn').textContent = paused ? 'Resume' : 'Pause';
+    if (paused) document.getElementById('continueBtn').focus();
+    else document.getElementById('pauseBtn').focus();
   }
 
   function togglePause() {
@@ -1497,22 +1184,101 @@
     setPaused(!paused);
   }
 
+  // Merge independent input sources so releasing a thumb cannot release a keyboard key.
+  const inputSources = new Map();
+  const pad = document.querySelector('.pad');
+  const directions = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+  let padPointer = null;
+
+  function setInput(source, keys) {
+    if (keys.length) inputSources.set(source, keys);
+    else inputSources.delete(source);
+    const active = new Set([...inputSources.values()].flat());
+    for (const k of new Set([...Object.keys(key), ...active])) {
+      if (active.has(k) && !key[k]) pressed[k] = true;
+      key[k] = active.has(k);
+    }
+    pad.querySelectorAll('[data-k]').forEach((el) => {
+      el.classList.toggle('is-held', !!key[el.getAttribute('data-k')]);
+    });
+  }
+
+  function releasePad() {
+    const pointer = padPointer;
+    padPointer = null;
+    setInput('pad', []);
+    if (pointer !== null && pad.hasPointerCapture(pointer)) pad.releasePointerCapture(pointer);
+  }
+
+  function resetControls() {
+    inputSources.clear();
+    releasePad();
+    for (const k in pressed) pressed[k] = false;
+    mouseDown = false;
+    nozzleDrag = false;
+    lastMouse = null;
+  }
+
+  function steerPad(ev) {
+    const rect = pad.getBoundingClientRect();
+    const x = (ev.clientX - rect.left) / rect.width * 2 - 1;
+    const y = (ev.clientY - rect.top) / rect.height * 2 - 1;
+    const keys = [];
+    // Fixed digital output: a neutral center and eight directional sectors.
+    if (Math.hypot(x, y) > 0.24) {
+      const diagonalThreshold = Math.tan(Math.PI / 8);
+      if (Math.abs(x) >= Math.abs(y) * diagonalThreshold) keys.push(x < 0 ? 'ArrowLeft' : 'ArrowRight');
+      if (Math.abs(y) >= Math.abs(x) * diagonalThreshold) keys.push(y < 0 ? 'ArrowUp' : 'ArrowDown');
+    }
+    setInput('pad', keys);
+  }
+
+  pad.addEventListener('pointerdown', (ev) => {
+    if (padPointer !== null || (ev.pointerType === 'mouse' && ev.button !== 0)) return;
+    ev.preventDefault();
+    padPointer = ev.pointerId;
+    pad.setPointerCapture(ev.pointerId);
+    steerPad(ev);
+  }, { passive: false });
+  pad.addEventListener('pointermove', (ev) => {
+    if (ev.pointerId !== padPointer) return;
+    ev.preventDefault();
+    steerPad(ev);
+  }, { passive: false });
+  for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) {
+    pad.addEventListener(type, (ev) => {
+      if (ev.pointerId === padPointer) releasePad();
+    });
+  }
+  window.addEventListener('blur', resetControls);
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) resetControls();
+  });
+
   window.addEventListener('keydown', (e) => {
-    const mk = mapKey(e);
+    const focusedKey = e.target?.getAttribute?.('data-k');
+    const directionActivation = directions.includes(focusedKey) && (e.key === ' ' || e.key === 'Enter');
+    if (!directionActivation && e.key !== 'Escape' && ['BUTTON', 'SELECT', 'INPUT', 'TEXTAREA', 'SUMMARY'].includes(e.target?.tagName)) return;
+    const mk = directionActivation ? focusedKey : mapKey(e);
     if (!mk) return;
     e.preventDefault();
 
-    if (!key[mk]) pressed[mk] = true;
-    key[mk] = true;
-
+    if (e.repeat) return;
+    setInput('keyboard:' + (e.code || e.key), [mk]);
     if (triggerVirtualButton(mk)) return;
   }, { passive: false });
 
   window.addEventListener('keyup', (e) => {
+    const source = 'keyboard:' + (e.code || e.key);
+    if (inputSources.has(source)) {
+      e.preventDefault();
+      setInput(source, []);
+      return;
+    }
     const mk = mapKey(e);
     if (!mk) return;
     e.preventDefault();
-    key[mk] = false;
+    setInput('keyboard:' + (e.code || e.key), []);
   }, { passive: false });
 
   const stage = document.getElementById('stage');
@@ -1520,20 +1286,18 @@
 
   document.querySelectorAll('[data-k]').forEach((el) => {
     const k = el.getAttribute('data-k');
+    el.addEventListener('contextmenu', (ev) => ev.preventDefault());
+    el.addEventListener('click', (ev) => {
+      // Native keyboard/assistive activation; pointer presses already run on down.
+      if (ev.detail === 0 && !directions.includes(k)) triggerVirtualButton(k);
+    });
+    if (directions.includes(k)) return;
     function down(ev) {
       ev.preventDefault();
+      if (ev.pointerType === 'mouse' && ev.button !== 0) return;
       if (triggerVirtualButton(k)) return;
-      if (!key[k]) pressed[k] = true;
-      key[k] = true;
-    }
-    function up(ev) {
-      ev.preventDefault();
-      key[k] = false;
     }
     el.addEventListener('pointerdown', down, { passive: false });
-    el.addEventListener('pointerup', up, { passive: false });
-    el.addEventListener('pointercancel', up, { passive: false });
-    el.addEventListener('pointerleave', up, { passive: false });
   });
 
   canvas.addEventListener('pointerdown', (ev) => {
